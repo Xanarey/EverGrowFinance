@@ -8,5 +8,5 @@ public interface UserService {
 
     List<User> getAllUsers();
     User getUserById(Long id);
-
+    void updateUser(User user);
 }

@@ -5,6 +5,8 @@ import com.swift.evergrowfinance.repository.UserRepository;
 import com.swift.evergrowfinance.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.lang.NonNullApi;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,7 +25,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> getAllUsers() {
         log.info("IN UserServiceImpl getAllUsers");
-//        return userRepository.findAllWithWallets();
         return userRepository.findAll();
     }
 
@@ -31,5 +32,11 @@ public class UserServiceImpl implements UserService {
     public User getUserById(Long id) {
         log.info("IN UserServiceImpl getById {}", id);
         return userRepository.findById(id).orElse(new User());
+    }
+
+    @CacheEvict(value = "users", key = "#user.email")
+    @Override
+    public void updateUser(User user) {
+        //TODO update with key
     }
 }
