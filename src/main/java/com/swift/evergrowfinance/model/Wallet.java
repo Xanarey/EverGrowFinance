@@ -30,8 +30,8 @@ public class Wallet {
     private LocalDateTime createdAt;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "account_type")
-    private AccountType accountType;
+    @Column(name = "wallet_type")
+    private WalletType walletType;
 
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)

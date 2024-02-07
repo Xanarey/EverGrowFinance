@@ -5,6 +5,7 @@ import com.swift.evergrowfinance.model.Wallet;
 import com.swift.evergrowfinance.repository.UserRepository;
 import com.swift.evergrowfinance.repository.WalletRepository;
 import com.swift.evergrowfinance.service.MoneyTransferService;
+import com.swift.evergrowfinance.service.TransactionService;
 import com.swift.evergrowfinance.service.WalletService;
 import com.swift.evergrowfinance.exceptions.InsufficientFundsException;
 import lombok.extern.slf4j.Slf4j;
@@ -25,12 +26,14 @@ public class MoneyTransferServiceImpl implements MoneyTransferService {
     private final WalletRepository walletRepository;
     private final WalletService walletService;
     private final UserRepository userRepository;
+    private final TransactionService transactionService;
 
     @Autowired
-    public MoneyTransferServiceImpl(WalletRepository walletRepository, WalletService walletService, UserRepository userRepository) {
+    public MoneyTransferServiceImpl(WalletRepository walletRepository, WalletService walletService, UserRepository userRepository, TransactionService transactionService) {
         this.walletRepository = walletRepository;
         this.walletService = walletService;
         this.userRepository = userRepository;
+        this.transactionService = transactionService;
     }
 
     @Transactional
@@ -67,6 +70,7 @@ public class MoneyTransferServiceImpl implements MoneyTransferService {
 
         walletService.update(walletFrom);
         walletService.update(walletTo);
+        transactionService.savingTransaction(user.getId(), walletTo.getUser().getId(), amount, walletFrom.getWalletType(), walletFrom.getPhoneNumber());
 
         log.info("IN MoneyTransferServiceImpl transferMoney - close transaction");
     }

@@ -1,6 +1,6 @@
 package com.swift.evergrowfinance.model;
 
-public enum AccountType {
+public enum WalletType {
     CURRENT,
     CREDIT,
     CUMULATIVE
