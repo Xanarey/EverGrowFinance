@@ -1,7 +1,6 @@
 package com.swift.evergrowfinance.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
@@ -18,6 +17,9 @@ public class Wallet {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "phone_number")
+    private String phoneNumber;
+
     @Column(name = "salary")
     private BigDecimal salary;
 
@@ -31,9 +33,12 @@ public class Wallet {
     @Column(name = "account_type")
     private AccountType accountType;
 
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @JsonBackReference
     private User user;
+
+
 
 }
