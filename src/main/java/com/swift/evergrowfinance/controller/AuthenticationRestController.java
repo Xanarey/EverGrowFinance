@@ -2,7 +2,6 @@ package com.swift.evergrowfinance.controller;
 
 import com.swift.evergrowfinance.dto.AuthRequestDto;
 import com.swift.evergrowfinance.model.User;
-import com.swift.evergrowfinance.repository.UserRepository;
 import com.swift.evergrowfinance.security.JwtTokenProvider;
 import com.swift.evergrowfinance.service.UserService;
 import lombok.extern.slf4j.Slf4j;

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,9 +40,13 @@ public class TransactionController {
     @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
     public ResponseEntity<List<Transaction>> getUserTransactionsHistory() {
         String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-        Optional<User> user = userService.getUserByEmail(userEmail);
-        List<Transaction> transactionList = transactionService.getTransactionsForUser(user.get().getId());
+        Optional<User> userOptional = userService.getUserByEmail(userEmail);
 
-        return new ResponseEntity<>(transactionList, HttpStatus.OK);
+        if (userOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.emptyList());
+        }
+
+        List<Transaction> transactionList = transactionService.getTransactionsForUser(userOptional.get().getId());
+        return ResponseEntity.ok(transactionList);
     }
 }
