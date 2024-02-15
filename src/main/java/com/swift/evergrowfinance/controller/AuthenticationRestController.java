@@ -4,6 +4,7 @@ import com.swift.evergrowfinance.dto.AuthRequestDto;
 import com.swift.evergrowfinance.model.User;
 import com.swift.evergrowfinance.repository.UserRepository;
 import com.swift.evergrowfinance.security.JwtTokenProvider;
+import com.swift.evergrowfinance.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,13 +25,13 @@ import java.util.Map;
 public class AuthenticationRestController {
 
     private final AuthenticationManager authenticationManager;
-    private final UserRepository userRepository;
+    private final UserService userService;
     private final JwtTokenProvider jwtTokenProvider;
 
     @Autowired
-    public AuthenticationRestController(AuthenticationManager authenticationManager, UserRepository userRepository, JwtTokenProvider jwtTokenProvider) {
+    public AuthenticationRestController(AuthenticationManager authenticationManager, UserService userService, JwtTokenProvider jwtTokenProvider) {
         this.authenticationManager = authenticationManager;
-        this.userRepository = userRepository;
+        this.userService = userService;
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
@@ -39,7 +40,7 @@ public class AuthenticationRestController {
         log.info("IN AuthenticationRestController authenticate");
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(requestDto.getEmail(), requestDto.getPassword()));
-            User user = userRepository.findByEmail(requestDto.getEmail()).orElseThrow(() -> new UsernameNotFoundException("User does`t exists"));
+            User user = userService.getUserByEmail(requestDto.getEmail()).orElseThrow(() -> new UsernameNotFoundException("User does`t exists"));
             String token = jwtTokenProvider.createToken(requestDto.getEmail(), user.getRole().name());
             Map<Object, Object> response = new HashMap<>();
             response.put("email", requestDto.getEmail());

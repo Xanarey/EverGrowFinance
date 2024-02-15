@@ -23,6 +23,11 @@ public class TransactionServiceImpl implements TransactionService {
         this.transactionRepository = transactionRepository;
     }
 
+    public List<Transaction> getTransactionsForUser(Long id) {
+        log.info("IN TransactionServiceImpl getTransactionById {}", id);
+        return transactionRepository.getAllByFromAccountId(id);
+    }
+
     @Override
     public List<Transaction> getAllTransactions() {
         log.info("IN TransactionServiceImpl TransactionServiceImpl");

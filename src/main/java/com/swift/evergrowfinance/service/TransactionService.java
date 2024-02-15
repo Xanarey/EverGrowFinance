@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface TransactionService {
 
+    List<Transaction> getTransactionsForUser(Long id);
     List<Transaction> getAllTransactions();
     void savingTransaction(Long fromAccountId, Long toAccountId, BigDecimal amount, WalletType walletType, String phoneNumber);
 }
