@@ -30,4 +30,8 @@ public class User {
     @JsonManagedReference
     private List<Wallet> wallets = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JsonManagedReference
+    private List<Subscription> subscriptions = new ArrayList<>();
+
 }

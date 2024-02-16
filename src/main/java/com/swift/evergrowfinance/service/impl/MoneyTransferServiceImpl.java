@@ -1,12 +1,11 @@
 package com.swift.evergrowfinance.service.impl;
 
+import com.swift.evergrowfinance.model.Subscription;
 import com.swift.evergrowfinance.model.User;
 import com.swift.evergrowfinance.model.Wallet;
 import com.swift.evergrowfinance.repository.UserRepository;
 import com.swift.evergrowfinance.repository.WalletRepository;
-import com.swift.evergrowfinance.service.MoneyTransferService;
-import com.swift.evergrowfinance.service.TransactionService;
-import com.swift.evergrowfinance.service.WalletService;
+import com.swift.evergrowfinance.service.*;
 import com.swift.evergrowfinance.exceptions.InsufficientFundsException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Service
@@ -25,15 +25,19 @@ public class MoneyTransferServiceImpl implements MoneyTransferService {
 
     private final WalletRepository walletRepository;
     private final WalletService walletService;
+    private final UserService userService;
     private final UserRepository userRepository;
     private final TransactionService transactionService;
+    private final SubscriptionsService subscriptionsService;
 
     @Autowired
-    public MoneyTransferServiceImpl(WalletRepository walletRepository, WalletService walletService, UserRepository userRepository, TransactionService transactionService) {
+    public MoneyTransferServiceImpl(WalletRepository walletRepository, WalletService walletService, UserService userService, UserRepository userRepository, TransactionService transactionService, SubscriptionsService service, SubscriptionsService subscriptionsService) {
         this.walletRepository = walletRepository;
         this.walletService = walletService;
+        this.userService = userService;
         this.userRepository = userRepository;
         this.transactionService = transactionService;
+        this.subscriptionsService = subscriptionsService;
     }
 
     @Transactional
@@ -73,6 +77,35 @@ public class MoneyTransferServiceImpl implements MoneyTransferService {
         transactionService.savingTransaction(user.getId(), walletTo.getUser().getId(), amount, walletFrom.getWalletType(), walletFrom.getPhoneNumber());
 
         log.info("IN MoneyTransferServiceImpl transferMoney - close transaction");
+    }
+
+    @Transactional
+    @Override
+    public void initiateSubscription(User user, String walletNumber) {
+        Wallet wallet = user.getWallets().stream()
+                .filter(w -> w.getPhoneNumber().equals(walletNumber))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Invalid wallet number"));
+
+        Subscription subscription = new Subscription();
+
+        subscription.setName("Kinopoisk");
+        subscription.setPrice(new BigDecimal("500.00"));
+        subscription.setStartDate(LocalDateTime.now());
+        subscription.setEndDate(LocalDateTime.now().plusMonths(3));
+        subscription.setStatus("ACTIVE");
+
+        subscription.setType("premium");
+        subscription.setPaymentFrequency("monthly");
+        subscription.setAuto_renew(true);
+        subscription.setWalletNumber(wallet.getPhoneNumber());
+        subscription.setUser(user);
+
+        wallet.setBalance(wallet.getBalance().subtract(new BigDecimal("500.00")));
+        walletService.update(wallet);
+        subscriptionsService.saveSubscription(subscription);
+        userService.update(user);
+        log.info("Transaction for subs complete!");
     }
 
 }
