@@ -1,7 +1,9 @@
 package com.swift.evergrowfinance.model;
 
+import lombok.Getter;
 import java.io.Serializable;
 
+@Getter
 public enum Permission implements Serializable {
 
     DEV_ADMIN("ADMIN"),
@@ -11,10 +13,6 @@ public enum Permission implements Serializable {
 
     Permission(String permission) {
         this.permission = permission;
-    }
-
-    public String getPermission() {
-        return permission;
     }
 
 }

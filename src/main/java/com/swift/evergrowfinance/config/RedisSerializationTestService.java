@@ -8,6 +8,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
+
 @Service
 public class RedisSerializationTestService {
 
@@ -32,7 +34,8 @@ public class RedisSerializationTestService {
 
         // Десериализация DTO
         UserDetailsDTO retrievedDto = (UserDetailsDTO) valueOps.get(key);
-        UserDetails retrievedUserDetails = new org.springframework.security.core.userdetails.User(retrievedDto.getUsername(), retrievedDto.getPassword(), retrievedDto.getAuthorities());
+        UserDetails retrievedUserDetails = new org.springframework.security.core.userdetails
+                .User(Objects.requireNonNull(retrievedDto).getUsername(), retrievedDto.getPassword(), retrievedDto.getAuthorities());
 
         // Вывод для проверки
         System.out.println("Retrieved UserDetails: " + retrievedUserDetails.getUsername());

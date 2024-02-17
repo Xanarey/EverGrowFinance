@@ -29,7 +29,6 @@ public class AuthenticationRestController {
     private final AuthenticationManager authenticationManager;
     private final UserService userService;
     private final JwtTokenProvider jwtTokenProvider;
-    private final UserDetailsServiceImpl userDetailsService;
 
     @Autowired
     public AuthenticationRestController(RedisSerializationTestService redisTestService, AuthenticationManager authenticationManager, UserService userService, JwtTokenProvider jwtTokenProvider, UserDetailsServiceImpl userDetailsService) {
@@ -37,7 +36,6 @@ public class AuthenticationRestController {
         this.authenticationManager = authenticationManager;
         this.userService = userService;
         this.jwtTokenProvider = jwtTokenProvider;
-        this.userDetailsService = userDetailsService;
     }
 
     @PostMapping("/auth")
@@ -45,20 +43,14 @@ public class AuthenticationRestController {
         try {
             redisTestService.testUserDetailsSerialization(requestDto.getEmail());
 
-
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(requestDto.getEmail(), requestDto.getPassword()));
             User user = userService.getUserByEmail(requestDto.getEmail()).orElseThrow(() -> new UsernameNotFoundException("User does`t exists"));
-
-//            UserDetails userDetails = userDetailsService.loadUserByUsername(requestDto.getEmail());
 
             String token = jwtTokenProvider.createToken(requestDto.getEmail(), user.getRole().name());
             Map<Object, Object> response = new HashMap<>();
             log.info("IN AuthenticationRestController authenticate");
             response.put("email", requestDto.getEmail());
             response.put("token", token);
-
-//            redisTestService.testSerialization(userDetails);
-
 
             return ResponseEntity.ok(response);
         } catch (AuthenticationException e) {

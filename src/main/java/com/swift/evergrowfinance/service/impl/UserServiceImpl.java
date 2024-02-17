@@ -4,7 +4,6 @@ import com.swift.evergrowfinance.model.User;
 import com.swift.evergrowfinance.repository.UserRepository;
 import com.swift.evergrowfinance.service.UserService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.webresources.Cache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
