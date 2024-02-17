@@ -1,8 +1,10 @@
 package com.swift.evergrowfinance.controller;
 
+import com.swift.evergrowfinance.config.RedisSerializationTestService;
 import com.swift.evergrowfinance.dto.AuthRequestDto;
 import com.swift.evergrowfinance.model.User;
 import com.swift.evergrowfinance.security.JwtTokenProvider;
+import com.swift.evergrowfinance.security.UserDetailsServiceImpl;
 import com.swift.evergrowfinance.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,27 +25,41 @@ import java.util.Map;
 @Slf4j
 public class AuthenticationRestController {
 
+    private final RedisSerializationTestService redisTestService;
     private final AuthenticationManager authenticationManager;
     private final UserService userService;
     private final JwtTokenProvider jwtTokenProvider;
+    private final UserDetailsServiceImpl userDetailsService;
 
     @Autowired
-    public AuthenticationRestController(AuthenticationManager authenticationManager, UserService userService, JwtTokenProvider jwtTokenProvider) {
+    public AuthenticationRestController(RedisSerializationTestService redisTestService, AuthenticationManager authenticationManager, UserService userService, JwtTokenProvider jwtTokenProvider, UserDetailsServiceImpl userDetailsService) {
+        this.redisTestService = redisTestService;
         this.authenticationManager = authenticationManager;
         this.userService = userService;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.userDetailsService = userDetailsService;
     }
 
     @PostMapping("/auth")
     public ResponseEntity<?> authenticate(@RequestBody AuthRequestDto requestDto) {
-        log.info("IN AuthenticationRestController authenticate");
         try {
+            redisTestService.testUserDetailsSerialization(requestDto.getEmail());
+
+
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(requestDto.getEmail(), requestDto.getPassword()));
             User user = userService.getUserByEmail(requestDto.getEmail()).orElseThrow(() -> new UsernameNotFoundException("User does`t exists"));
+
+//            UserDetails userDetails = userDetailsService.loadUserByUsername(requestDto.getEmail());
+
             String token = jwtTokenProvider.createToken(requestDto.getEmail(), user.getRole().name());
             Map<Object, Object> response = new HashMap<>();
+            log.info("IN AuthenticationRestController authenticate");
             response.put("email", requestDto.getEmail());
             response.put("token", token);
+
+//            redisTestService.testSerialization(userDetails);
+
+
             return ResponseEntity.ok(response);
         } catch (AuthenticationException e) {
             return new ResponseEntity<>("Invalid email/password combination", HttpStatus.UNAUTHORIZED);

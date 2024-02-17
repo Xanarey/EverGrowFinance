@@ -1,6 +1,8 @@
 package com.swift.evergrowfinance.model;
 
-public enum WalletType {
+import java.io.Serializable;
+
+public enum WalletType implements Serializable {
     CURRENT,
     CREDIT,
     CUMULATIVE

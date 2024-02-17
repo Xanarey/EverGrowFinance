@@ -1,13 +1,13 @@
 package com.swift.evergrowfinance.model;
 
 import lombok.Getter;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+import java.io.Serializable;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Getter
-public enum Role {
+public enum Role implements Serializable {
 
     ADMIN(Set.of(Permission.DEV_ADMIN)),
     USER(Set.of(Permission.DEV_USER));
@@ -18,9 +18,9 @@ public enum Role {
         this.permissions = permissions;
     }
 
-    public Set<SimpleGrantedAuthority> getAuthorities() {
+    public Set<CustomGrantedAuthority> getAuthorities() {
         return getPermissions().stream()
-                .map(permission -> new SimpleGrantedAuthority(permission.getPermission()))
+                .map(permission -> new CustomGrantedAuthority(permission.getPermission()))
                 .collect(Collectors.toSet());
     }
 

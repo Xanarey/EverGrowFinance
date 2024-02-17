@@ -1,9 +1,9 @@
 package com.swift.evergrowfinance.security;
 
+import com.swift.evergrowfinance.model.CustomGrantedAuthority;
 import com.swift.evergrowfinance.model.User;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
@@ -14,10 +14,10 @@ public class SecurityUser implements UserDetails {
 
     private final String username;
     private final String password;
-    private final List<SimpleGrantedAuthority> authorities;
+    private final List<CustomGrantedAuthority> authorities;
     private final boolean isActive;
 
-    public SecurityUser(String username, String password, List<SimpleGrantedAuthority> authorities, boolean isActive) {
+    public SecurityUser(String username, String password, List<CustomGrantedAuthority> authorities, boolean isActive) {
         this.username = username;
         this.password = password;
         this.authorities = authorities;
