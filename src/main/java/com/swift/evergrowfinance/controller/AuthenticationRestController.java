@@ -31,7 +31,7 @@ public class AuthenticationRestController {
     private final JwtTokenProvider jwtTokenProvider;
 
     @Autowired
-    public AuthenticationRestController(RedisSerializationTestService redisTestService, AuthenticationManager authenticationManager, UserService userService, JwtTokenProvider jwtTokenProvider, UserDetailsServiceImpl userDetailsService) {
+    public AuthenticationRestController(RedisSerializationTestService redisTestService, AuthenticationManager authenticationManager, UserService userService, JwtTokenProvider jwtTokenProvider) {
         this.redisTestService = redisTestService;
         this.authenticationManager = authenticationManager;
         this.userService = userService;
