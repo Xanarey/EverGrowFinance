@@ -5,6 +5,7 @@ import com.swift.evergrowfinance.model.Subscription;
 import com.swift.evergrowfinance.model.User;
 import com.swift.evergrowfinance.model.Wallet;
 import com.swift.evergrowfinance.service.MoneyTransferService;
+import com.swift.evergrowfinance.service.SubscriptionsService;
 import com.swift.evergrowfinance.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,19 +18,21 @@ import java.math.BigDecimal;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/initiateSubscription")
+@RequestMapping("/subscriptions")
 public class UserSubscription {
 
     private final UserService userService;
     private final MoneyTransferService moneyTransferService;
+    private final SubscriptionsService subscriptionsService;
 
     @Autowired
-    public UserSubscription(UserService userService, MoneyTransferService moneyTransferService) {
+    public UserSubscription(UserService userService, MoneyTransferService moneyTransferService, SubscriptionsService subscriptionsService) {
         this.userService = userService;
         this.moneyTransferService = moneyTransferService;
+        this.subscriptionsService = subscriptionsService;
     }
 
-    @PostMapping
+    @PostMapping("/initiate")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<String> createKinopoiskSubscription(@RequestBody SubscriptionRequest request) {
         String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -65,4 +68,30 @@ public class UserSubscription {
         return new ResponseEntity<>("Подписка на Кинопоиск успешно оформлена по номеру - " + phoneNumber, HttpStatus.OK);
     }
 
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<String> deleteSubscription(@PathVariable Long id) {
+        String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        Optional<User> userOptional = userService.getUserByEmail(userEmail);
+        if (userOptional.isEmpty()) {
+            return new ResponseEntity<>("Пользователь не найден", HttpStatus.BAD_REQUEST);
+        }
+
+        User user = userOptional.get();
+        Optional<Subscription> subscriptionOptional = user.getSubscriptions().stream()
+                .filter(s -> s.getId().equals(id))
+                .findFirst();
+        if (subscriptionOptional.isEmpty())
+            return new ResponseEntity<>("Подписка с указанным id не найдена", HttpStatus.OK);
+        Subscription subscription = subscriptionOptional.get();
+
+        user.getSubscriptions().removeIf(s -> s.getId().equals(subscription.getId()));
+        userService.update(user);
+
+        subscriptionsService.deleteSubscriptionById(subscription.getId());
+
+
+
+        return new ResponseEntity<>("Подписка на " + subscription.getName() + " успешно удалена", HttpStatus.OK);
+    }
 }

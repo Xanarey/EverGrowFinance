@@ -59,6 +59,8 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
+    @CacheEvict(value = "users", key = "#user.email")
+    @Transactional
     @Override
     public void save(User user) {
         log.info("IN UserServiceImpl save {}", user);

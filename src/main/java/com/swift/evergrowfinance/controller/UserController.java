@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
@@ -33,8 +34,9 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('USER')")
-    public ResponseEntity<User> getUserById(@PathVariable @Validated Long id) {
-        return new ResponseEntity<>(userService.getUserById(id), HttpStatus.OK);
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<User> getUser(@PathVariable Long id) {
+        Optional<User> userOptional = Optional.ofNullable(userService.getUserById(id));
+        return userOptional.map(user -> new ResponseEntity<>(user, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }
 }

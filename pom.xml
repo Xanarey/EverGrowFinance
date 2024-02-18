@@ -111,6 +111,9 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
+                    <compilerArguments>
+                        <arg>-parameters</arg>
+                    </compilerArguments>
                 </configuration>
             </plugin>
         </plugins>

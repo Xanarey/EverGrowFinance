@@ -8,6 +8,7 @@ import com.swift.evergrowfinance.security.UserDetailsServiceImpl;
 import com.swift.evergrowfinance.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -37,7 +38,7 @@ public class AuthenticationRestController {
         this.userService = userService;
         this.jwtTokenProvider = jwtTokenProvider;
     }
-
+    
     @PostMapping("/auth")
     public ResponseEntity<?> authenticate(@RequestBody AuthRequestDto requestDto) {
         try {
