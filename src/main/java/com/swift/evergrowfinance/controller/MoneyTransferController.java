@@ -1,14 +1,16 @@
 package com.swift.evergrowfinance.controller;
 
 import com.swift.evergrowfinance.dto.MoneyTransferRequest;
+import com.swift.evergrowfinance.dto.TransferResponse;
 import com.swift.evergrowfinance.service.MoneyTransferService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/transfer")
@@ -23,12 +25,12 @@ public class MoneyTransferController {
 
     @PostMapping
     @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
-    public ResponseEntity<?> transferMoney(@RequestBody MoneyTransferRequest request) {
+    public TransferResponse transferMoney(@RequestBody MoneyTransferRequest request) {
         try {
             moneyTransferService.transferMoney(request.getFromPhoneNumber(), request.getToPhoneNumber(), request.getAmount());
-            return ResponseEntity.ok("Перевод успешно выполнен");
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return new TransferResponse("Перевод успешно выполнен");
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 }

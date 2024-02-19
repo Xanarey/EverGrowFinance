@@ -7,6 +7,7 @@ import com.swift.evergrowfinance.service.TransactionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -34,6 +35,7 @@ public class TransactionServiceImpl implements TransactionService {
         return transactionRepository.findAll();
     }
 
+    @Transactional
     @Override
     public void savingTransaction(Long fromAccountId, Long toAccountId, BigDecimal amount, WalletType walletType, String phoneNumber) {
         Transaction transaction = new Transaction();

@@ -1,5 +1,7 @@
 package com.swift.evergrowfinance.service.impl;
 
+import com.swift.evergrowfinance.exceptions.InvalidTransactionException;
+import com.swift.evergrowfinance.exceptions.WalletNotFoundException;
 import com.swift.evergrowfinance.model.Subscription;
 import com.swift.evergrowfinance.model.User;
 import com.swift.evergrowfinance.model.Wallet;
@@ -17,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 @Service
 @Slf4j
@@ -31,7 +32,7 @@ public class MoneyTransferServiceImpl implements MoneyTransferService {
     private final SubscriptionsService subscriptionsService;
 
     @Autowired
-    public MoneyTransferServiceImpl(WalletRepository walletRepository, WalletService walletService, UserService userService, UserRepository userRepository, TransactionService transactionService, SubscriptionsService service, SubscriptionsService subscriptionsService) {
+    public MoneyTransferServiceImpl(WalletRepository walletRepository, WalletService walletService, UserService userService, UserRepository userRepository, TransactionService transactionService, SubscriptionsService subscriptionsService) {
         this.walletRepository = walletRepository;
         this.walletService = walletService;
         this.userService = userService;
@@ -43,26 +44,26 @@ public class MoneyTransferServiceImpl implements MoneyTransferService {
     @Transactional
     @Override
     public void transferMoney(String fromPhoneNumber, String toPhoneNumber, BigDecimal amount) {
+        if (fromPhoneNumber.equals(toPhoneNumber)) {
+            throw new InvalidTransactionException("Невозможно перевести средства на тот же кошелек");
+        }
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден"));
 
         Wallet walletFrom = walletRepository.findByPhoneNumber(fromPhoneNumber)
-                .orElseThrow(() -> new RuntimeException("Кошелек отправителя не найден"));
+                .orElseThrow(() -> new WalletNotFoundException("Кошелек отправителя не найден"));
 
         Wallet walletTo = walletRepository.findByPhoneNumber(toPhoneNumber)
-                .orElseThrow(() -> new RuntimeException("Кошелек получателя не найден"));
+                .orElseThrow(() -> new WalletNotFoundException("Кошелек получателя не найден"));
 
         boolean walletExists = user.getWallets().stream()
                 .anyMatch(wallet -> fromPhoneNumber.equals(wallet.getPhoneNumber()));
 
         if (!walletExists) {
-            throw new RuntimeException("Невозможно совершить операцию по указанным данным");
-        }
-
-        if (fromPhoneNumber.equals(toPhoneNumber)) {
-            throw new RuntimeException("Невозможно перевести средства самому себе");
+            throw new InvalidTransactionException("Невозможно совершить операцию по указанным данным");
         }
 
         if (walletFrom.getBalance().compareTo(amount) < 0) {
@@ -70,13 +71,16 @@ public class MoneyTransferServiceImpl implements MoneyTransferService {
         }
 
         walletFrom.setBalance(walletFrom.getBalance().subtract(amount));
-        Objects.requireNonNull(walletTo).setBalance(walletTo.getBalance().add(amount));
+        walletTo.setBalance(walletTo.getBalance().add(amount));
 
         walletService.update(walletFrom);
         walletService.update(walletTo);
         transactionService.savingTransaction(user.getId(), walletTo.getUser().getId(), amount, walletFrom.getWalletType(), walletFrom.getPhoneNumber());
 
-        log.info("IN MoneyTransferServiceImpl transferMoney - close transaction");
+        userService.update(walletFrom.getUser());
+        userService.update(walletTo.getUser());
+
+        log.info("Перевод средств выполнен: с {} на {}, сумма: {}", fromPhoneNumber, toPhoneNumber, amount);
     }
 
     @Transactional

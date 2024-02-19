@@ -1,7 +1,6 @@
 package com.swift.evergrowfinance.controller;
 
 import com.swift.evergrowfinance.dto.SubscriptionRequest;
-import com.swift.evergrowfinance.model.Subscription;
 import com.swift.evergrowfinance.model.User;
 import com.swift.evergrowfinance.model.Wallet;
 import com.swift.evergrowfinance.service.MoneyTransferService;
@@ -9,13 +8,12 @@ import com.swift.evergrowfinance.service.SubscriptionsService;
 import com.swift.evergrowfinance.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/subscriptions")
@@ -34,64 +32,48 @@ public class UserSubscription {
 
     @PostMapping("/initiate")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<String> createKinopoiskSubscription(@RequestBody SubscriptionRequest request) {
-        String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-        Optional<User> userOptional = userService.getUserByEmail(userEmail);
-        if (userOptional.isEmpty()) {
-            return new ResponseEntity<>("Пользователь не найден", HttpStatus.BAD_REQUEST);
-        }
+    public String createKinopoiskSubscription(@RequestBody SubscriptionRequest request) {
+        User user = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
-        User user = userOptional.get();
-        String phoneNumber = request.getPhoneNumber();
+        Wallet wallet = validateAndGetWallet(user, request.getPhoneNumber());
+        validateSubscription(user);
+        validateWalletBalance(wallet, new BigDecimal("500.00"));
 
-        Optional<Wallet> walletOptional = user.getWallets().stream()
-                .filter(w -> w.getPhoneNumber().equals(phoneNumber))
-                .findFirst();
-        if (walletOptional.isEmpty()) {
-            return new ResponseEntity<>("Указаны не валидные данные", HttpStatus.BAD_REQUEST);
-        }
+        moneyTransferService.initiateSubscription(user, request.getPhoneNumber());
 
-        Optional<Subscription> subscriptionOptional = user.getSubscriptions().stream()
-                .filter(s -> s.getName().equals("Kinopoisk"))
-                .findFirst();
-        if (subscriptionOptional.isPresent()) {
-            return new ResponseEntity<>("У вас уже имеется действующая подписка на Кинопоиск", HttpStatus.OK);
-        }
-
-        Wallet wallet = walletOptional.get();
-        if (wallet.getBalance().compareTo(new BigDecimal("500.00")) < 0) {
-            return new ResponseEntity<>("На счету вашего кошелька недостаточно средств для осуществления подписки на сервис 'Кинопоиск'", HttpStatus.OK);
-        }
-
-        moneyTransferService.initiateSubscription(user, phoneNumber);
-
-        return new ResponseEntity<>("Подписка на Кинопоиск успешно оформлена по номеру - " + phoneNumber, HttpStatus.OK);
+        return "Подписка на Кинопоиск успешно оформлена по номеру - " + request.getPhoneNumber();
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<String> deleteSubscription(@PathVariable Long id) {
+    public String deleteSubscription(@PathVariable Long id) {
         String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-        Optional<User> userOptional = userService.getUserByEmail(userEmail);
-        if (userOptional.isEmpty()) {
-            return new ResponseEntity<>("Пользователь не найден", HttpStatus.BAD_REQUEST);
+        User user = userService.getUserByEmail(userEmail)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Пользователь не найден"));
+
+        subscriptionsService.deleteSubscription(user.getId(), id);
+        return "Подписка успешно удалена";
+    }
+
+    private Wallet validateAndGetWallet(User user, String phoneNumber) {
+        return user.getWallets().stream()
+                .filter(w -> w.getPhoneNumber().equals(phoneNumber))
+                .findFirst()
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Указаны не валидные данные"));
+    }
+    private void validateSubscription(User user) {
+        user.getSubscriptions().stream()
+                .filter(s -> s.getName().equals("Kinopoisk"))
+                .findFirst()
+                .ifPresent(s -> {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "У вас уже имеется подписка на " + "Kinopoisk");
+                });
+    }
+    private void validateWalletBalance(Wallet wallet, BigDecimal requiredBalance) {
+        if (wallet.getBalance().compareTo(requiredBalance) < 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "На счету вашего кошелька недостаточно средств для осуществления подписки на сервис 'Кинопоиск'");
         }
-
-        User user = userOptional.get();
-        Optional<Subscription> subscriptionOptional = user.getSubscriptions().stream()
-                .filter(s -> s.getId().equals(id))
-                .findFirst();
-        if (subscriptionOptional.isEmpty())
-            return new ResponseEntity<>("Подписка с указанным id не найдена", HttpStatus.OK);
-        Subscription subscription = subscriptionOptional.get();
-
-        user.getSubscriptions().removeIf(s -> s.getId().equals(subscription.getId()));
-        userService.update(user);
-
-        subscriptionsService.deleteSubscriptionById(subscription.getId());
-
-
-
-        return new ResponseEntity<>("Подписка на " + subscription.getName() + " успешно удалена", HttpStatus.OK);
     }
 }

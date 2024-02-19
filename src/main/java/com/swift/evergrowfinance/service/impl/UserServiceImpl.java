@@ -40,9 +40,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserById(Long id) {
+    public Optional<User> getUserById(Long id) {
         log.info("IN UserServiceImpl getById {}", id);
-        return userRepository.findById(id).orElse(new User());
+        return userRepository.findById(id);
     }
 
     @CacheEvict(value = "users", key = "#user.email")

@@ -29,15 +29,12 @@ public class RedisSerializationTestService {
         ValueOperations<Object, Object> valueOps = redisTemplate.opsForValue();
         String key = "test:userDetails";
 
-        // Сериализация DTO
         valueOps.set(key, dto);
 
-        // Десериализация DTO
         UserDetailsDTO retrievedDto = (UserDetailsDTO) valueOps.get(key);
         UserDetails retrievedUserDetails = new org.springframework.security.core.userdetails
                 .User(Objects.requireNonNull(retrievedDto).getUsername(), retrievedDto.getPassword(), retrievedDto.getAuthorities());
 
-        // Вывод для проверки
         System.out.println("Retrieved UserDetails: " + retrievedUserDetails.getUsername());
     }
 }
