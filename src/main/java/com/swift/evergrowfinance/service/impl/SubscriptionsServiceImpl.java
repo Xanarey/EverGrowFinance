@@ -3,15 +3,11 @@ package com.swift.evergrowfinance.service.impl;
 import com.swift.evergrowfinance.model.Subscription;
 import com.swift.evergrowfinance.model.User;
 import com.swift.evergrowfinance.repository.SubscriptionRepository;
-import com.swift.evergrowfinance.repository.UserRepository;
 import com.swift.evergrowfinance.service.SubscriptionsService;
 import com.swift.evergrowfinance.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
