@@ -39,7 +39,4 @@ public class Wallet implements Serializable {
     @JoinColumn(name = "user_id")
     @JsonBackReference
     private User user;
-
-
-
 }

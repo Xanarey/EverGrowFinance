@@ -9,6 +9,7 @@ import com.swift.evergrowfinance.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -20,20 +21,11 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
 
     private final SubscriptionRepository subscriptionRepository;
     private final UserService userService;
-    private final UserRepository userRepository;
 
     @Autowired
-    public SubscriptionsServiceImpl(SubscriptionRepository subscriptionRepository, UserService userService, UserRepository userRepository) {
+    public SubscriptionsServiceImpl(SubscriptionRepository subscriptionRepository, UserService userService) {
         this.subscriptionRepository = subscriptionRepository;
         this.userService = userService;
-        this.userRepository = userRepository;
-    }
-
-    @CacheEvict(value = "subscriptions", key = "#subscription.id")
-    @Override
-    public void saveSubscription(Subscription subscription) {
-        log.info("IN SubscriptionsServiceImpl in saveSubscription + {} ", subscription);
-        subscriptionRepository.save(subscription);
     }
 
     @Override
@@ -42,13 +34,15 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
         return subscriptionRepository.getSubscriptionById(id);
     }
 
-    @CacheEvict(value = "subscriptions", key = "#subscriptionId")
     @Override
-    public void deleteSubscription(Long userId, Long subscriptionId) {
-        log.info("IN SubscriptionsServiceImpl in deleteSubscriptionById {}", subscriptionId);
+    public void saveSubscription(User user, Subscription subscription) {
+        log.info("IN SubscriptionsServiceImpl in saveSubscription + {} ", subscription);
+        subscriptionRepository.save(subscription);
+    }
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден"));
+    @Override
+    public void deleteSubscription(User user, Long subscriptionId) {
+        log.info("IN SubscriptionsServiceImpl in deleteSubscriptionById {}", subscriptionId);
 
         Subscription subscription = user.getSubscriptions().stream()
                 .filter(s -> s.getId().equals(subscriptionId))

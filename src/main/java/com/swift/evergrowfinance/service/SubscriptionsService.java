@@ -1,9 +1,10 @@
 package com.swift.evergrowfinance.service;
 
 import com.swift.evergrowfinance.model.Subscription;
+import com.swift.evergrowfinance.model.User;
 
 public interface SubscriptionsService {
-    void saveSubscription(Subscription subscription);
+    void saveSubscription(User user, Subscription subscription);
     Subscription getSubscriptionById(Long id);
-    void deleteSubscription(Long id, Long subscriptionId);
+    void deleteSubscription(User user, Long subscriptionId);
 }

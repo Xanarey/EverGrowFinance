@@ -10,12 +10,15 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
-public interface UserRepository extends JpaRepository<User, Long> {
-    @Cacheable("users")
-    Optional<User> findByEmail(String email);
+    @Repository
+    public interface UserRepository extends JpaRepository<User, Long> {
 
-    @EntityGraph(attributePaths = {"wallets"})
-    @NonNull
-    List<User> findAll();
-}
+        Optional<User> findUserById(Long id);
+
+        @Cacheable(value = "users", key = "#email")
+        Optional<User> findByEmail(String email);
+
+        @EntityGraph(attributePaths = {"wallets"})
+        @NonNull
+        List<User> findAll();
+    }

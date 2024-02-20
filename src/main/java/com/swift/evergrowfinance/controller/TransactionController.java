@@ -8,7 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
@@ -36,10 +38,8 @@ public class TransactionController {
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
-    public List<Transaction> getUserTransactionsHistory() {
-        String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userService.getUserByEmail(userEmail).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+    public List<Transaction> getUserTransactionsHistory(@PathVariable Long id) {
+        User user = userService.getUserServById(id).orElseThrow(() -> new UsernameNotFoundException("User not found"));
         return transactionService.getTransactionsForUser(user.getId());
     }
 }

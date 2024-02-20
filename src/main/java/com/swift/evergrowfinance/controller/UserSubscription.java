@@ -30,7 +30,7 @@ public class UserSubscription {
         this.subscriptionsService = subscriptionsService;
     }
 
-    @PostMapping("/initiate")
+    @PostMapping("/create")
     @PreAuthorize("hasAuthority('ADMIN')")
     public String createKinopoiskSubscription(@RequestBody SubscriptionRequest request) {
         User user = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName())
@@ -40,7 +40,7 @@ public class UserSubscription {
         validateSubscription(user);
         validateWalletBalance(wallet, new BigDecimal("500.00"));
 
-        moneyTransferService.initiateSubscription(user, request.getPhoneNumber());
+        moneyTransferService.initiateSubscription(user, request.getPhoneNumber(), wallet);
 
         return "Подписка на Кинопоиск успешно оформлена по номеру - " + request.getPhoneNumber();
     }
@@ -52,7 +52,7 @@ public class UserSubscription {
         User user = userService.getUserByEmail(userEmail)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Пользователь не найден"));
 
-        subscriptionsService.deleteSubscription(user.getId(), id);
+        subscriptionsService.deleteSubscription(user, id);
         return "Подписка успешно удалена";
     }
 

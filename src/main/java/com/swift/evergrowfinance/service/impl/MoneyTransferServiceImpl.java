@@ -11,18 +11,20 @@ import com.swift.evergrowfinance.service.*;
 import com.swift.evergrowfinance.exceptions.InsufficientFundsException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.regex.Pattern;
 
 @Service
 @Slf4j
 public class MoneyTransferServiceImpl implements MoneyTransferService {
+
+    private static final String PHONE_REGEX = "(8|\\+7)\\d{10}";
+    private static final Pattern PHONE_PATTERN = Pattern.compile(PHONE_REGEX);
 
     private final WalletRepository walletRepository;
     private final WalletService walletService;
@@ -43,14 +45,16 @@ public class MoneyTransferServiceImpl implements MoneyTransferService {
 
     @Transactional
     @Override
-    public void transferMoney(String fromPhoneNumber, String toPhoneNumber, BigDecimal amount) {
+    public void transferMoney(String userEmail, String fromPhoneNumber, String toPhoneNumber, BigDecimal amount) {
+        if (!PHONE_PATTERN.matcher(fromPhoneNumber).matches() || !PHONE_PATTERN.matcher(toPhoneNumber).matches()) {
+            throw new IllegalArgumentException("Неверный формат номера телефона");
+        }
+
         if (fromPhoneNumber.equals(toPhoneNumber)) {
             throw new InvalidTransactionException("Невозможно перевести средства на тот же кошелек");
         }
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
-        User user = userRepository.findByEmail(email)
+        User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден"));
 
         Wallet walletFrom = walletRepository.findByPhoneNumber(fromPhoneNumber)
@@ -85,12 +89,7 @@ public class MoneyTransferServiceImpl implements MoneyTransferService {
 
     @Transactional
     @Override
-    public void initiateSubscription(User user, String walletNumber) {
-        Wallet wallet = user.getWallets().stream()
-                .filter(w -> w.getPhoneNumber().equals(walletNumber))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Invalid wallet number"));
-
+    public void initiateSubscription(User user, String walletNumber, Wallet wallet) {
         Subscription subscription = new Subscription();
 
         subscription.setName("Kinopoisk");
@@ -107,7 +106,8 @@ public class MoneyTransferServiceImpl implements MoneyTransferService {
 
         wallet.setBalance(wallet.getBalance().subtract(new BigDecimal("500.00")));
         walletService.update(wallet);
-        subscriptionsService.saveSubscription(subscription);
+        subscriptionsService.saveSubscription(user, subscription);
+        userRepository.save(user);
         userService.update(user);
         log.info("Transaction for subs complete!");
     }

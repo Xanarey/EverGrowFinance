@@ -5,13 +5,13 @@ import com.swift.evergrowfinance.repository.UserRepository;
 import com.swift.evergrowfinance.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
@@ -19,12 +19,10 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final CacheManager cacheManager;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, CacheManager cacheManager) {
+    public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.cacheManager = cacheManager;
     }
 
     @Override
@@ -33,37 +31,41 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll();
     }
 
+    @Cacheable(value = "users", key = "#email")
     @Override
     public Optional<User> getUserByEmail(String email) {
         log.info("IN UserServiceImpl getUserByEmail {}", email);
         return userRepository.findByEmail(email);
     }
 
+    @Cacheable(value = "users", key = "#id")
     @Override
-    public Optional<User> getUserById(Long id) {
-        log.info("IN UserServiceImpl getById {}", id);
-        return userRepository.findById(id);
+    public Optional<User> getUserServById(Long id) {
+        log.info("IN UserServiceImpl getUserById {}", id);
+        return userRepository.findUserById(id);
     }
 
-    @CacheEvict(value = "users", key = "#user.email")
+    @CachePut(value = "users", key = "#user.id")
     @Transactional
     @Override
     public void update(User user) {
         log.info("IN UserServiceImpl update {}", user);
-
-        Optional<User> optionalUser = userRepository.findById(user.getId());
-        if (optionalUser.isPresent() && !optionalUser.get().getEmail().equals(user.getEmail())) {
-            Objects.requireNonNull(cacheManager.getCache("users")).evict(optionalUser.get().getEmail());
-        }
-
         userRepository.save(user);
     }
 
-    @CacheEvict(value = "users", key = "#user.email")
+    @CachePut(value = "users", key = "#user.id")
     @Transactional
     @Override
     public void save(User user) {
         log.info("IN UserServiceImpl save {}", user);
         userRepository.save(user);
+    }
+
+    @CacheEvict(value = "users", key = "#user.id")
+    @Transactional
+    @Override
+    public void delete(User user) {
+        log.info("IN UserServiceImpl delete {}", user);
+        userRepository.delete(user);
     }
 }

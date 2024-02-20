@@ -10,6 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,15 +30,14 @@ public class UserBalance {
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
-    public List<UserBalanceDto> getUserBalance() {
-        String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userService.getUserByEmail(userEmail)
+    public List<UserBalanceDto> getUserBalance(@PathVariable Long id) {
+        User user = userService.getUserServById(id)
                 .orElseThrow(() -> {
-                    log.error("User with email {} not found", userEmail);
-                    return new UsernameNotFoundException("User with email " + userEmail + " not found");
+                    log.error("User with id {} not found", id);
+                    return new UsernameNotFoundException("User with id " + id + " not found");
                 });
 
-        log.info("Retrieving balance for user with email {} ", userEmail);
+        log.info("Retrieving balance for user with id {} ", id);
         return user.getWallets().stream()
                 .map(this::toUserBalanceDto)
                 .toList();

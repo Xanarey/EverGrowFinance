@@ -6,6 +6,7 @@ import com.swift.evergrowfinance.service.MoneyTransferService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,7 +28,8 @@ public class MoneyTransferController {
     @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
     public TransferResponse transferMoney(@RequestBody MoneyTransferRequest request) {
         try {
-            moneyTransferService.transferMoney(request.getFromPhoneNumber(), request.getToPhoneNumber(), request.getAmount());
+            String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+            moneyTransferService.transferMoney(userEmail, request.getFromPhoneNumber(), request.getToPhoneNumber(), request.getAmount());
             return new TransferResponse("Перевод успешно выполнен");
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
