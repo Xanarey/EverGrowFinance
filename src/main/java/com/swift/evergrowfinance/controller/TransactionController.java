@@ -5,14 +5,18 @@ import com.swift.evergrowfinance.model.User;
 import com.swift.evergrowfinance.service.TransactionService;
 import com.swift.evergrowfinance.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/transactions")
@@ -36,7 +40,9 @@ public class TransactionController {
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
     public List<Transaction> getUserTransactionsHistory(@PathVariable Long id) {
-        User user = userService.getUserServById(id).orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        return transactionService.getTransactionsForUser(user.getId());
+        User userContextHolder = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        Optional<User> user = userService.getUserServById(userContextHolder.getId());
+        return transactionService.getTransactionsForUser(user.get().getId());
     }
 }
