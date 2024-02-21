@@ -46,23 +46,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @CachePut(value = "users", key = "#user.id")
-    @Transactional
     @Override
-    public void update(User user) {
+    public User update(User user) {
         log.info("IN UserServiceImpl update {}", user);
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
     @CachePut(value = "users", key = "#user.id")
-    @Transactional
     @Override
-    public void save(User user) {
+    public User save(User user) {
         log.info("IN UserServiceImpl save {}", user);
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
     @CacheEvict(value = "users", key = "#user.id")
-    @Transactional
     @Override
     public void delete(User user) {
         log.info("IN UserServiceImpl delete {}", user);

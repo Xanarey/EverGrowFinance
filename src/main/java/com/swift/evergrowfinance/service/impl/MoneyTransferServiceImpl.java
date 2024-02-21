@@ -87,9 +87,8 @@ public class MoneyTransferServiceImpl implements MoneyTransferService {
         log.info("Перевод средств выполнен: с {} на {}, сумма: {}", fromPhoneNumber, toPhoneNumber, amount);
     }
 
-    @Transactional
     @Override
-    public void initiateSubscription(User user, String walletNumber, Wallet wallet) {
+    public void initiateSubscription(User user, Wallet wallet) {
         Subscription subscription = new Subscription();
 
         subscription.setName("Kinopoisk");
@@ -104,10 +103,15 @@ public class MoneyTransferServiceImpl implements MoneyTransferService {
         subscription.setWalletNumber(wallet.getPhoneNumber());
         subscription.setUser(user);
 
+        subscriptionsService.saveSubscription(subscription);
+
         wallet.setBalance(wallet.getBalance().subtract(new BigDecimal("500.00")));
         walletService.update(wallet);
-        subscriptionsService.saveSubscription(user, subscription);
-        userRepository.save(user);
+
+        if (!user.getSubscriptions().contains(subscription)) {
+            user.getSubscriptions().add(subscription);
+        }
+
         userService.update(user);
         log.info("Transaction for subs complete!");
     }

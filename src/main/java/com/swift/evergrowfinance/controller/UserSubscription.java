@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/subscriptions")
@@ -33,14 +34,15 @@ public class UserSubscription {
     @PostMapping("/create")
     @PreAuthorize("hasAuthority('ADMIN')")
     public String createKinopoiskSubscription(@RequestBody SubscriptionRequest request) {
-        User user = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName())
+        User userContextHolder = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        Optional<User> user = userService.getUserServById(userContextHolder.getId());
 
-        Wallet wallet = validateAndGetWallet(user, request.getPhoneNumber());
-        validateSubscription(user);
+        Wallet wallet = validateAndGetWallet(user.get(), request.getPhoneNumber());
+        validateSubscription(user.get());
         validateWalletBalance(wallet, new BigDecimal("500.00"));
 
-        moneyTransferService.initiateSubscription(user, request.getPhoneNumber(), wallet);
+        moneyTransferService.initiateSubscription(user.get(), wallet);
 
         return "Подписка на Кинопоиск успешно оформлена по номеру - " + request.getPhoneNumber();
     }
@@ -48,11 +50,11 @@ public class UserSubscription {
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
     public String deleteSubscription(@PathVariable Long id) {
-        String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userService.getUserByEmail(userEmail)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Пользователь не найден"));
+        User userContextHolder = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        Optional<User> user = userService.getUserServById(userContextHolder.getId());
 
-        subscriptionsService.deleteSubscription(user, id);
+        subscriptionsService.deleteSubscription(user.get(), id);
         return "Подписка успешно удалена";
     }
 

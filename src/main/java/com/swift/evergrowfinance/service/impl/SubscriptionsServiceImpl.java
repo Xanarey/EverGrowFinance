@@ -31,7 +31,7 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
     }
 
     @Override
-    public void saveSubscription(User user, Subscription subscription) {
+    public void saveSubscription(Subscription subscription) {
         log.info("IN SubscriptionsServiceImpl in saveSubscription + {} ", subscription);
         subscriptionRepository.save(subscription);
     }

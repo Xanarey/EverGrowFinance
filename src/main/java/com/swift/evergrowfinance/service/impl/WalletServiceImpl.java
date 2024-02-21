@@ -19,7 +19,6 @@ public class WalletServiceImpl implements WalletService {
         this.walletRepository = walletRepository;
     }
 
-    @Transactional
     @Override
     public void update(Wallet wallet) {
         log.info("IN WalletServiceImpl update {}", wallet);
