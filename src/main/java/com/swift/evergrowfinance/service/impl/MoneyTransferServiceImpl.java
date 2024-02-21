@@ -29,23 +29,21 @@ public class MoneyTransferServiceImpl implements MoneyTransferService {
     private final WalletRepository walletRepository;
     private final WalletService walletService;
     private final UserService userService;
-    private final UserRepository userRepository;
     private final TransactionService transactionService;
     private final SubscriptionsService subscriptionsService;
 
     @Autowired
-    public MoneyTransferServiceImpl(WalletRepository walletRepository, WalletService walletService, UserService userService, UserRepository userRepository, TransactionService transactionService, SubscriptionsService subscriptionsService) {
+    public MoneyTransferServiceImpl(WalletRepository walletRepository, WalletService walletService, UserService userService, TransactionService transactionService, SubscriptionsService subscriptionsService) {
         this.walletRepository = walletRepository;
         this.walletService = walletService;
         this.userService = userService;
-        this.userRepository = userRepository;
         this.transactionService = transactionService;
         this.subscriptionsService = subscriptionsService;
     }
 
     @Transactional
     @Override
-    public void transferMoney(String userEmail, String fromPhoneNumber, String toPhoneNumber, BigDecimal amount) {
+    public void transferMoney(User user, String fromPhoneNumber, String toPhoneNumber, BigDecimal amount) {
         if (!PHONE_PATTERN.matcher(fromPhoneNumber).matches() || !PHONE_PATTERN.matcher(toPhoneNumber).matches()) {
             throw new IllegalArgumentException("Неверный формат номера телефона");
         }
@@ -53,9 +51,6 @@ public class MoneyTransferServiceImpl implements MoneyTransferService {
         if (fromPhoneNumber.equals(toPhoneNumber)) {
             throw new InvalidTransactionException("Невозможно перевести средства на тот же кошелек");
         }
-
-        User user = userRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден"));
 
         Wallet walletFrom = walletRepository.findByPhoneNumber(fromPhoneNumber)
                 .orElseThrow(() -> new WalletNotFoundException("Кошелек отправителя не найден"));

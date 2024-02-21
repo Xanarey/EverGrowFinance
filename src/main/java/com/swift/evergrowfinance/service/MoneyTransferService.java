@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 
 public interface MoneyTransferService {
 
-    void transferMoney(String userEmail, String fromPhoneNumber, String toPhoneNumber, BigDecimal amount);
+    void transferMoney(User user, String fromPhoneNumber, String toPhoneNumber, BigDecimal amount);
     void initiateSubscription(User user, Wallet wallet);
 
 }
