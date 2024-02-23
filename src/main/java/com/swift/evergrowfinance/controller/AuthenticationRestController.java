@@ -1,6 +1,5 @@
 package com.swift.evergrowfinance.controller;
 
-import com.swift.evergrowfinance.config.RedisSerializationTestService;
 import com.swift.evergrowfinance.dto.AuthRequestDto;
 import com.swift.evergrowfinance.model.User;
 import com.swift.evergrowfinance.security.JwtTokenProvider;
