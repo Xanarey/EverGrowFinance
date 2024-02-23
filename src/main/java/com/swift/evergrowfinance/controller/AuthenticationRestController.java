@@ -24,14 +24,12 @@ import java.util.Map;
 @Slf4j
 public class AuthenticationRestController {
 
-    private final RedisSerializationTestService redisTestService;
     private final AuthenticationManager authenticationManager;
     private final UserService userService;
     private final JwtTokenProvider jwtTokenProvider;
 
     @Autowired
-    public AuthenticationRestController(RedisSerializationTestService redisTestService, AuthenticationManager authenticationManager, UserService userService, JwtTokenProvider jwtTokenProvider) {
-        this.redisTestService = redisTestService;
+    public AuthenticationRestController(AuthenticationManager authenticationManager, UserService userService, JwtTokenProvider jwtTokenProvider) {
         this.authenticationManager = authenticationManager;
         this.userService = userService;
         this.jwtTokenProvider = jwtTokenProvider;
@@ -40,7 +38,6 @@ public class AuthenticationRestController {
     @PostMapping("/auth")
     public Map<String, String> authenticate(@RequestBody AuthRequestDto requestDto) {
         try {
-            redisTestService.testUserDetailsSerialization(requestDto.getEmail());
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(requestDto.getEmail(), requestDto.getPassword()));
             return getMap(requestDto);
         } catch (AuthenticationException e) {

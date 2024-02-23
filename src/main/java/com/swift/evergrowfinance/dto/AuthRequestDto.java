@@ -6,4 +6,9 @@ import lombok.Data;
 public class AuthRequestDto {
     private String email;
     private String password;
+
+    public AuthRequestDto(String email, String password) {
+        this.email = email;
+        this.password = password;
+    }
 }
