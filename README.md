@@ -1,51 +1,24 @@
-EverGrowFinance
-Overview
+# EverGrowFinance Overview
+
 EverGrowFinance is a dynamic platform designed to streamline user transactions, offering features such as video service subscriptions, user authentication, card linkage to wallets, transaction verification, and automated fund deductions based on subscription terms.
 
-Technologies
-Java 17: Core programming language
-Spring Security + JWT: For robust authentication and authorization
-PostgreSQL: Database management
-Redis: Employed as a caching solution
-Spring JPA: For database interaction
-Automated Tests: Covering key layers of the application
-Endpoints
-EverGrowFinance exposes several RESTful endpoints for user interaction:
+## Technologies
 
-Authentication
+- **Java 17**: Core programming language.
+- **Spring Security + JWT**: For robust authentication and authorization.
+- **PostgreSQL**: Database management.
+- **Redis**: Employed as a caching solution.
+- **Spring JPA**: For database interaction.
+- **Automated Tests**: Covering key layers of the application.
 
-bash
-Copy code
-POST http://localhost:8080/auth
-Body: {"email":"admin@gmail.com", "password":"12345"}
-Response includes a JWT token for subsequent requests.
+![Java Icon](path/to/java-icon.png)
+![Spring Security + JWT Icon](path/to/spring-security-icon.png)
+![PostgreSQL Icon](path/to/postgresql-icon.png)
+![Redis Icon](path/to/redis-icon.png)
+![Spring JPA Icon](path/to/spring-jpa-icon.png)
+![Automated Tests Icon](path/to/automated-tests-icon.png)
 
-User Details
+## Endpoints
 
-bash
-Copy code
-GET http://localhost:8080/users/{userId}
-Subscription Management
+### Authentication
 
-bash
-Copy code
-POST http://localhost:8080/subscriptions/create
-DELETE http://localhost:8080/subscriptions/{subscriptionId}
-Balance Inquiry
-
-bash
-Copy code
-GET http://localhost:8080/balance
-Fund Transfer
-
-bash
-Copy code
-POST http://localhost:8080/transfer
-Body: {"fromPhoneNumber": 89997675428, "toPhoneNumber": 89153608090, "amount": 2500}
-Transaction History
-
-bash
-Copy code
-GET http://localhost:8080/transactions/all
-Contact
-For any queries or contributions, please reach out via Telegram: @engend
