@@ -4,6 +4,7 @@ import com.swift.evergrowfinance.model.User;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 
@@ -21,4 +22,7 @@ import java.util.Optional;
         @EntityGraph(attributePaths = {"wallets"})
         @NonNull
         List<User> findAll();
+
+        @Query("SELECT u FROM User u JOIN FETCH u.subscriptions")
+        List<User> findAllBySubscriptions();
     }

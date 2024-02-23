@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+
 @Service
 @Slf4j
 public class SubscriptionsServiceImpl implements SubscriptionsService {
@@ -28,6 +30,12 @@ public class SubscriptionsServiceImpl implements SubscriptionsService {
     public Subscription getSubscriptionById(Long id) {
         log.info("IN SubscriptionsServiceImpl in getSubscriptionById + {} ", id);
         return subscriptionRepository.getSubscriptionById(id);
+    }
+
+    @Override
+    public List<Subscription> getAllSubscriptions() {
+        log.info("IN SubscriptionsServiceImpl in getAllSubscriptions");
+        return subscriptionRepository.findAll();
     }
 
     @Override
