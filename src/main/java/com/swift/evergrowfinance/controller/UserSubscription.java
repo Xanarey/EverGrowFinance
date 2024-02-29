@@ -46,15 +46,12 @@ public class UserSubscription {
         return "Подписка на Кинопоиск успешно оформлена по номеру - " + request.getPhoneNumber();
     }
 
-
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
     public String deleteSubscription(@PathVariable Long id) {
-        User userContextHolder = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName())
+        User user = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
-        Optional<User> user = userService.getUserServById(userContextHolder.getId());
-
-        subscriptionsService.deleteSubscription(user.get(), id);
+        subscriptionsService.deleteSubscription(user, id);
         return "Подписка успешно удалена";
     }
 
