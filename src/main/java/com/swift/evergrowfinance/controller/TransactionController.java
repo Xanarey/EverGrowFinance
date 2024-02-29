@@ -39,18 +39,16 @@ public class TransactionController {
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     public List<Transaction> getUserTransactionsHistory(@PathVariable Long id) {
-        User userContextHolder = userService.getUserServById(id)
+        User user = userService.getUserServById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
-        Optional<User> user = userService.getUserServById(userContextHolder.getId());
-        return transactionService.getTransactionsForUser(user.get().getId());
+        return transactionService.getTransactionsForUser(user.getId());
     }
 
     @GetMapping("/my")
     @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
     public List<Transaction> getMyTransactionsHistory() {
-        User userContextHolder = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName())
+        User user = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
-        Optional<User> user = userService.getUserServById(userContextHolder.getId());
-        return transactionService.getTransactionsForUser(user.get().getId());
+        return transactionService.getTransactionsForUser(user.getId());
     }
 }
