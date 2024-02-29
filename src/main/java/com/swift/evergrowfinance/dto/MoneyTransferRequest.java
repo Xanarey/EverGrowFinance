@@ -1,15 +1,10 @@
 package com.swift.evergrowfinance.dto;
 
 import com.swift.evergrowfinance.model.enums.Currency;
-import com.swift.evergrowfinance.model.enums.TransactionStatus;
 import com.swift.evergrowfinance.model.enums.TransactionType;
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import lombok.Data;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 @Data
 public class MoneyTransferRequest {

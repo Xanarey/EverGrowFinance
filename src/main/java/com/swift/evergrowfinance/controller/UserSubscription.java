@@ -3,7 +3,6 @@ package com.swift.evergrowfinance.controller;
 import com.swift.evergrowfinance.dto.SubscriptionRequest;
 import com.swift.evergrowfinance.model.entities.User;
 import com.swift.evergrowfinance.model.entities.Wallet;
-import com.swift.evergrowfinance.service.MoneyTransferService;
 import com.swift.evergrowfinance.service.SubscriptionsService;
 import com.swift.evergrowfinance.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,16 +33,19 @@ public class UserSubscription {
     public String createKinopoiskSubscription(@RequestBody SubscriptionRequest request) {
         User userContextHolder = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
-        Optional<User> user = userService.getUserServById(userContextHolder.getId());
 
-        Wallet wallet = validateAndGetWallet(user.get(), request.getPhoneNumber());
-        validateSubscription(user.get());
+        User user = userService.getUserServById(userContextHolder.getId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found by ID"));
+
+        Wallet wallet = validateAndGetWallet(user, request.getPhoneNumber());
+        validateSubscription(user);
         validateWalletBalance(wallet, new BigDecimal("500.00"));
 
-        subscriptionsService.createSubscription(user.get(), wallet);
+        subscriptionsService.createSubscription(user, wallet);
 
         return "Подписка на Кинопоиск успешно оформлена по номеру - " + request.getPhoneNumber();
     }
+
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
