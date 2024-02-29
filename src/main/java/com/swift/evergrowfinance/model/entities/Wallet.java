@@ -1,6 +1,7 @@
-package com.swift.evergrowfinance.model;
+package com.swift.evergrowfinance.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.swift.evergrowfinance.model.enums.WalletType;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;

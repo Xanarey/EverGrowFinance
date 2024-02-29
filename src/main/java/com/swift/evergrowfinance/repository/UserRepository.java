@@ -1,6 +1,6 @@
 package com.swift.evergrowfinance.repository;
 
-import com.swift.evergrowfinance.model.User;
+import com.swift.evergrowfinance.model.entities.User;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;

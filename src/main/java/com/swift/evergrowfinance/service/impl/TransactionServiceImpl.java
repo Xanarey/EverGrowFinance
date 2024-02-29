@@ -1,7 +1,7 @@
 package com.swift.evergrowfinance.service.impl;
 
-import com.swift.evergrowfinance.model.Transaction;
-import com.swift.evergrowfinance.model.WalletType;
+import com.swift.evergrowfinance.dto.MoneyTransferRequest;
+import com.swift.evergrowfinance.model.entities.Transaction;
 import com.swift.evergrowfinance.repository.TransactionRepository;
 import com.swift.evergrowfinance.service.TransactionService;
 import lombok.extern.slf4j.Slf4j;
@@ -9,9 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import static com.swift.evergrowfinance.model.enums.TransactionStatus.COMPLETED;
 
 @Service
 @Slf4j
@@ -26,7 +27,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     public List<Transaction> getTransactionsForUser(Long id) {
         log.info("IN TransactionServiceImpl getTransactionById {}", id);
-        return transactionRepository.getAllByFromAccountId(id);
+        return transactionRepository.getAllById(id);
     }
 
     @Override
@@ -37,14 +38,17 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Transactional
     @Override
-    public void savingTransaction(Long fromAccountId, Long toAccountId, BigDecimal amount, WalletType walletType, String phoneNumber) {
+    public void savingTransaction(MoneyTransferRequest request) {
         Transaction transaction = new Transaction();
-        transaction.setFromAccountId(fromAccountId);
-        transaction.setToAccountId(toAccountId);
-        transaction.setAmount(amount);
-        transaction.setTransactionDate(LocalDateTime.now());
-        transaction.setWalletType(walletType);
-        transaction.setPhoneNumber(phoneNumber);
+        transaction.setAmount(request.getAmount());
+        transaction.setCurrency(request.getCurrency());
+        transaction.setDateTime(LocalDateTime.now());
+        transaction.setSenderPhoneNumber(request.getSenderPhoneNumber());
+        transaction.setRecipientPhoneNumber(request.getRecipientPhoneNumber());
+        transaction.setStatus(COMPLETED); // TODO Как правильно реализовать с кафкой ?
+        transaction.setType(request.getType());
+        transaction.setDescription(request.getDescription());
+
         transactionRepository.save(transaction);
         log.info("IN TransactionServiceImpl savingTransaction {}", transaction);
     }

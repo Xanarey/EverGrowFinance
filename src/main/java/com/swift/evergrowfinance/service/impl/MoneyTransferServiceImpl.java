@@ -1,22 +1,22 @@
 package com.swift.evergrowfinance.service.impl;
 
+import com.swift.evergrowfinance.dto.MoneyTransferRequest;
 import com.swift.evergrowfinance.exceptions.InvalidTransactionException;
 import com.swift.evergrowfinance.exceptions.WalletNotFoundException;
-import com.swift.evergrowfinance.model.Subscription;
-import com.swift.evergrowfinance.model.User;
-import com.swift.evergrowfinance.model.Wallet;
-import com.swift.evergrowfinance.repository.UserRepository;
+import com.swift.evergrowfinance.model.entities.Subscription;
+import com.swift.evergrowfinance.model.entities.User;
+import com.swift.evergrowfinance.model.entities.Wallet;
 import com.swift.evergrowfinance.repository.WalletRepository;
 import com.swift.evergrowfinance.service.*;
 import com.swift.evergrowfinance.exceptions.InsufficientFundsException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 @Service
@@ -30,85 +30,58 @@ public class MoneyTransferServiceImpl implements MoneyTransferService {
     private final WalletService walletService;
     private final UserService userService;
     private final TransactionService transactionService;
-    private final SubscriptionsService subscriptionsService;
 
     @Autowired
-    public MoneyTransferServiceImpl(WalletRepository walletRepository, WalletService walletService, UserService userService, TransactionService transactionService, SubscriptionsService subscriptionsService) {
+    public MoneyTransferServiceImpl(WalletRepository walletRepository, WalletService walletService, UserService userService, TransactionService transactionService) {
         this.walletRepository = walletRepository;
         this.walletService = walletService;
         this.userService = userService;
         this.transactionService = transactionService;
-        this.subscriptionsService = subscriptionsService;
     }
 
     @Transactional
     @Override
-    public void transferMoney(User user, String fromPhoneNumber, String toPhoneNumber, BigDecimal amount) {
-        if (!PHONE_PATTERN.matcher(fromPhoneNumber).matches() || !PHONE_PATTERN.matcher(toPhoneNumber).matches()) {
+    public void transferMoney(User user, MoneyTransferRequest request) {
+        if (!PHONE_PATTERN.matcher(request.getSenderPhoneNumber()).matches() || !PHONE_PATTERN.matcher(request.getRecipientPhoneNumber()).matches()) {
             throw new IllegalArgumentException("Неверный формат номера телефона");
         }
 
-        if (fromPhoneNumber.equals(toPhoneNumber)) {
+        if (request.getSenderPhoneNumber().equals(request.getRecipientPhoneNumber())) {
             throw new InvalidTransactionException("Невозможно перевести средства на тот же кошелек");
         }
 
-        Wallet walletFrom = walletRepository.findByPhoneNumber(fromPhoneNumber)
-                .orElseThrow(() -> new WalletNotFoundException("Кошелек отправителя не найден"));
+        Optional<Wallet> optionalWallet = walletRepository.findByPhoneNumber(request.getSenderPhoneNumber());
+        Wallet walletFrom;
+        if (optionalWallet.isPresent()) {
+            walletFrom = optionalWallet.get();
+        } else {
+            throw new WalletNotFoundException("Кошелек отправителя не найден");
+        }
 
-        Wallet walletTo = walletRepository.findByPhoneNumber(toPhoneNumber)
+        Wallet walletTo = walletRepository.findByPhoneNumber(request.getRecipientPhoneNumber())
                 .orElseThrow(() -> new WalletNotFoundException("Кошелек получателя не найден"));
 
         boolean walletExists = user.getWallets().stream()
-                .anyMatch(wallet -> fromPhoneNumber.equals(wallet.getPhoneNumber()));
+                .anyMatch(wallet -> request.getSenderPhoneNumber().equals(wallet.getPhoneNumber()));
 
         if (!walletExists) {
             throw new InvalidTransactionException("Невозможно совершить операцию по указанным данным");
         }
 
-        if (walletFrom.getBalance().compareTo(amount) < 0) {
+        if (walletFrom.getBalance().compareTo(request.getAmount()) < 0) {
             throw new InsufficientFundsException("Недостаточно средств на счету для перевода");
         }
 
-        walletFrom.setBalance(walletFrom.getBalance().subtract(amount));
-        walletTo.setBalance(walletTo.getBalance().add(amount));
+        walletFrom.setBalance(walletFrom.getBalance().subtract(request.getAmount()));
+        walletTo.setBalance(walletTo.getBalance().add(request.getAmount()));
 
         walletService.update(walletFrom);
         walletService.update(walletTo);
-        transactionService.savingTransaction(user.getId(), walletTo.getUser().getId(), amount, walletFrom.getWalletType(), walletFrom.getPhoneNumber());
+        transactionService.savingTransaction(request);
 
         userService.update(walletFrom.getUser());
         userService.update(walletTo.getUser());
 
-        log.info("Перевод средств выполнен: с {} на {}, сумма: {}", fromPhoneNumber, toPhoneNumber, amount);
+        log.info("Перевод средств выполнен: с {} на {}, сумма: {}", request.getSenderPhoneNumber(), request.getRecipientPhoneNumber(),request.getAmount());
     }
-
-    @Override
-    public void initiateSubscription(User user, Wallet wallet) {
-        Subscription subscription = new Subscription();
-
-        subscription.setName("Kinopoisk");
-        subscription.setPrice(new BigDecimal("500.00"));
-        subscription.setStartDate(LocalDateTime.now());
-        subscription.setEndDate(LocalDateTime.now().plusMonths(3));
-        subscription.setStatus("ACTIVE");
-
-        subscription.setType("premium");
-        subscription.setPaymentFrequency("monthly");
-        subscription.setAuto_renew(true);
-        subscription.setWalletNumber(wallet.getPhoneNumber());
-        subscription.setUser(user);
-
-        subscriptionsService.saveSubscription(subscription);
-
-        wallet.setBalance(wallet.getBalance().subtract(new BigDecimal("500.00")));
-        walletService.update(wallet);
-
-        if (!user.getSubscriptions().contains(subscription)) {
-            user.getSubscriptions().add(subscription);
-        }
-
-        userService.update(user);
-        log.info("Transaction for subs complete!");
-    }
-
 }

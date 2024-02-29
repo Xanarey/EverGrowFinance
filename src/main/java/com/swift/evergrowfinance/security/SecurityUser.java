@@ -1,7 +1,7 @@
 package com.swift.evergrowfinance.security;
 
-import com.swift.evergrowfinance.model.CustomGrantedAuthority;
-import com.swift.evergrowfinance.model.User;
+import com.swift.evergrowfinance.model.entities.CustomGrantedAuthority;
+import com.swift.evergrowfinance.model.entities.User;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

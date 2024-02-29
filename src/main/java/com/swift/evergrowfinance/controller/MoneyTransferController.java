@@ -2,7 +2,7 @@ package com.swift.evergrowfinance.controller;
 
 import com.swift.evergrowfinance.dto.MoneyTransferRequest;
 import com.swift.evergrowfinance.dto.TransferResponse;
-import com.swift.evergrowfinance.model.User;
+import com.swift.evergrowfinance.model.entities.User;
 import com.swift.evergrowfinance.service.MoneyTransferService;
 import com.swift.evergrowfinance.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,11 +36,15 @@ public class MoneyTransferController {
         try {
             User userContextHolder = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
-            Optional<User> user = userService.getUserServById(userContextHolder.getId());
-            moneyTransferService.transferMoney(user.get(), request.getFromPhoneNumber(), request.getToPhoneNumber(), request.getAmount());
+
+            User user = userService.getUserServById(userContextHolder.getId())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found by ID"));
+
+            moneyTransferService.transferMoney(user, request);
             return new TransferResponse("Перевод успешно выполнен");
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
+
 }

@@ -1,6 +1,6 @@
 package com.swift.evergrowfinance.service;
 
-import com.swift.evergrowfinance.model.User;
+import com.swift.evergrowfinance.model.entities.User;
 import com.swift.evergrowfinance.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

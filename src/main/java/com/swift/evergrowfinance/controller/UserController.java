@@ -1,6 +1,6 @@
 package com.swift.evergrowfinance.controller;
 
-import com.swift.evergrowfinance.model.User;
+import com.swift.evergrowfinance.model.entities.User;
 import com.swift.evergrowfinance.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

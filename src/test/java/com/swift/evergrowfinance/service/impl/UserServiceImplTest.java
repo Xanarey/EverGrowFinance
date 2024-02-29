@@ -1,9 +1,9 @@
 package com.swift.evergrowfinance.service.impl;
 
-import com.swift.evergrowfinance.model.Role;
-import com.swift.evergrowfinance.model.Subscription;
-import com.swift.evergrowfinance.model.Wallet;
-import com.swift.evergrowfinance.model.User;
+import com.swift.evergrowfinance.model.enums.Role;
+import com.swift.evergrowfinance.model.entities.Subscription;
+import com.swift.evergrowfinance.model.entities.Wallet;
+import com.swift.evergrowfinance.model.entities.User;
 import com.swift.evergrowfinance.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

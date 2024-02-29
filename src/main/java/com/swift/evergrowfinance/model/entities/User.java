@@ -1,6 +1,7 @@
-package com.swift.evergrowfinance.model;
+package com.swift.evergrowfinance.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.swift.evergrowfinance.model.enums.Role;
 import jakarta.persistence.*;
 import lombok.Data;
 

@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 @Data
 @Builder
 public class UserBalanceDto {
+    private String email;
     private String phoneNumber;
     private String walletType;
     private BigDecimal balance;

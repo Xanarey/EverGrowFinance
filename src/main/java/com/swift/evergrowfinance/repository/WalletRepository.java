@@ -1,6 +1,6 @@
 package com.swift.evergrowfinance.repository;
 
-import com.swift.evergrowfinance.model.Wallet;
+import com.swift.evergrowfinance.model.entities.Wallet;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

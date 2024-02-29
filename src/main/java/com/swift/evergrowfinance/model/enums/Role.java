@@ -1,5 +1,6 @@
-package com.swift.evergrowfinance.model;
+package com.swift.evergrowfinance.model.enums;
 
+import com.swift.evergrowfinance.model.entities.CustomGrantedAuthority;
 import lombok.Getter;
 
 import java.io.Serializable;

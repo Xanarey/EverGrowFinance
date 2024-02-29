@@ -2,8 +2,8 @@ package com.swift.evergrowfinance.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.swift.evergrowfinance.dto.AuthRequestDto;
-import com.swift.evergrowfinance.model.Role;
-import com.swift.evergrowfinance.model.User;
+import com.swift.evergrowfinance.model.enums.Role;
+import com.swift.evergrowfinance.model.entities.User;
 import com.swift.evergrowfinance.security.JwtTokenProvider;
 import com.swift.evergrowfinance.service.UserService;
 import org.junit.jupiter.api.BeforeEach;

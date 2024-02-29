@@ -1,6 +1,6 @@
 package com.swift.evergrowfinance.service.impl;
 
-import com.swift.evergrowfinance.model.Wallet;
+import com.swift.evergrowfinance.model.entities.Wallet;
 import com.swift.evergrowfinance.repository.WalletRepository;
 import com.swift.evergrowfinance.service.WalletService;
 import lombok.extern.slf4j.Slf4j;

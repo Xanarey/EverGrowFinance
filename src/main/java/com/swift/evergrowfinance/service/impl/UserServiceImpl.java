@@ -1,6 +1,6 @@
 package com.swift.evergrowfinance.service.impl;
 
-import com.swift.evergrowfinance.model.User;
+import com.swift.evergrowfinance.model.entities.User;
 import com.swift.evergrowfinance.repository.UserRepository;
 import com.swift.evergrowfinance.service.UserService;
 import lombok.extern.slf4j.Slf4j;

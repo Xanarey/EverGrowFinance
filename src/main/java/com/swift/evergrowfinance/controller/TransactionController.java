@@ -1,14 +1,13 @@
 package com.swift.evergrowfinance.controller;
 
-import com.swift.evergrowfinance.model.Transaction;
-import com.swift.evergrowfinance.model.User;
+import com.swift.evergrowfinance.model.entities.Transaction;
+import com.swift.evergrowfinance.model.entities.User;
 import com.swift.evergrowfinance.service.TransactionService;
 import com.swift.evergrowfinance.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,15 +30,24 @@ public class TransactionController {
         this.userService = userService;
     }
 
-    @GetMapping("/all")
+    @GetMapping
     @PreAuthorize("hasAuthority('ADMIN')")
     public List<Transaction> getAllTransactions() {
         return transactionService.getAllTransactions();
     }
 
-    @GetMapping
-    @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public List<Transaction> getUserTransactionsHistory(@PathVariable Long id) {
+        User userContextHolder = userService.getUserServById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        Optional<User> user = userService.getUserServById(userContextHolder.getId());
+        return transactionService.getTransactionsForUser(user.get().getId());
+    }
+
+    @GetMapping("/my")
+    @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
+    public List<Transaction> getMyTransactionsHistory() {
         User userContextHolder = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
         Optional<User> user = userService.getUserServById(userContextHolder.getId());

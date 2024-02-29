@@ -1,8 +1,8 @@
 package com.swift.evergrowfinance.controller;
 
 import com.swift.evergrowfinance.dto.SubscriptionRequest;
-import com.swift.evergrowfinance.model.User;
-import com.swift.evergrowfinance.model.Wallet;
+import com.swift.evergrowfinance.model.entities.User;
+import com.swift.evergrowfinance.model.entities.Wallet;
 import com.swift.evergrowfinance.service.MoneyTransferService;
 import com.swift.evergrowfinance.service.SubscriptionsService;
 import com.swift.evergrowfinance.service.UserService;
@@ -21,13 +21,11 @@ import java.util.Optional;
 public class UserSubscription {
 
     private final UserService userService;
-    private final MoneyTransferService moneyTransferService;
     private final SubscriptionsService subscriptionsService;
 
     @Autowired
-    public UserSubscription(UserService userService, MoneyTransferService moneyTransferService, SubscriptionsService subscriptionsService) {
+    public UserSubscription(UserService userService, SubscriptionsService subscriptionsService) {
         this.userService = userService;
-        this.moneyTransferService = moneyTransferService;
         this.subscriptionsService = subscriptionsService;
     }
 
@@ -42,7 +40,7 @@ public class UserSubscription {
         validateSubscription(user.get());
         validateWalletBalance(wallet, new BigDecimal("500.00"));
 
-        moneyTransferService.initiateSubscription(user.get(), wallet);
+        subscriptionsService.createSubscription(user.get(), wallet);
 
         return "Подписка на Кинопоиск успешно оформлена по номеру - " + request.getPhoneNumber();
     }
@@ -72,6 +70,7 @@ public class UserSubscription {
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "У вас уже имеется подписка на " + "Kinopoisk");
                 });
     }
+
     private void validateWalletBalance(Wallet wallet, BigDecimal requiredBalance) {
         if (wallet.getBalance().compareTo(requiredBalance) < 0) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,

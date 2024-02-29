@@ -1,4 +1,4 @@
-package com.swift.evergrowfinance.model;
+package com.swift.evergrowfinance.model.enums;
 
 import lombok.Getter;
 import java.io.Serializable;

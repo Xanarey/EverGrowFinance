@@ -1,6 +1,6 @@
 package com.swift.evergrowfinance.service;
 
-import com.swift.evergrowfinance.model.User;
+import com.swift.evergrowfinance.model.entities.User;
 
 import java.util.List;
 import java.util.Optional;

@@ -1,4 +1,4 @@
-package com.swift.evergrowfinance.model;
+package com.swift.evergrowfinance.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;

@@ -1,8 +1,8 @@
 package com.swift.evergrowfinance.controller;
 
 import com.swift.evergrowfinance.dto.UserBalanceDto;
-import com.swift.evergrowfinance.model.User;
-import com.swift.evergrowfinance.model.Wallet;
+import com.swift.evergrowfinance.model.entities.User;
+import com.swift.evergrowfinance.model.entities.Wallet;
 import com.swift.evergrowfinance.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,7 @@ public class UserBalance {
         this.userService = userService;
     }
 
-    @GetMapping
+    @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
     public List<UserBalanceDto> getUserBalance(@PathVariable Long id) {
         User user = userService.getUserServById(id)
@@ -44,6 +44,7 @@ public class UserBalance {
 
     private UserBalanceDto toUserBalanceDto(Wallet wallet) {
         return UserBalanceDto.builder()
+                .email(wallet.getUser().getEmail())
                 .phoneNumber(wallet.getPhoneNumber())
                 .walletType(wallet.getWalletType().name())
                 .balance(wallet.getBalance())

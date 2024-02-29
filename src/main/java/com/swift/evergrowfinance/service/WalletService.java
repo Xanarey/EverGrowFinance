@@ -1,6 +1,6 @@
 package com.swift.evergrowfinance.service;
 
-import com.swift.evergrowfinance.model.Wallet;
+import com.swift.evergrowfinance.model.entities.Wallet;
 
 public interface WalletService {
 
