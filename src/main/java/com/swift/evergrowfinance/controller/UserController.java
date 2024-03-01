@@ -1,6 +1,5 @@
 package com.swift.evergrowfinance.controller;
 
-import com.swift.evergrowfinance.dto.SubscriptionRequestDTO;
 import com.swift.evergrowfinance.dto.UserUpdateEmailDTO;
 import com.swift.evergrowfinance.model.entities.User;
 import com.swift.evergrowfinance.service.UserService;
@@ -8,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 

@@ -24,7 +24,7 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private CacheManager cacheManager;
+    private final CacheManager cacheManager;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository, CacheManager cacheManager) {
