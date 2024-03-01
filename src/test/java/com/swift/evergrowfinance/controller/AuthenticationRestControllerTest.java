@@ -1,7 +1,7 @@
 package com.swift.evergrowfinance.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.swift.evergrowfinance.dto.AuthRequestDto;
+import com.swift.evergrowfinance.dto.AuthRequestDTO;
 import com.swift.evergrowfinance.model.enums.Role;
 import com.swift.evergrowfinance.model.entities.User;
 import com.swift.evergrowfinance.security.JwtTokenProvider;
@@ -58,7 +58,7 @@ class AuthenticationRestControllerTest {
 
     @Test
     void shouldAuthenticateUser() throws Exception {
-        AuthRequestDto requestDto = new AuthRequestDto("user@example.com", "password");
+        AuthRequestDTO requestDto = new AuthRequestDTO("user@example.com", "password");
         User user = new User();
         user.setEmail("user@example.com");
         user.setPassword("12345");
@@ -79,7 +79,7 @@ class AuthenticationRestControllerTest {
 
     @Test
     void shouldReturnUnauthorizedForInvalidUser() throws Exception {
-        AuthRequestDto requestDto = new AuthRequestDto("invalid@example.com", "password");
+        AuthRequestDTO requestDto = new AuthRequestDTO("invalid@example.com", "password");
 
         when(authenticationManager.authenticate(any())).thenThrow(new BadCredentialsException("Invalid email/password combination"));
         when(userService.getUserByEmail("invalid@example.com")).thenReturn(Optional.empty());

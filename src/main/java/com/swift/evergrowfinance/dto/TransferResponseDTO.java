@@ -3,9 +3,9 @@ package com.swift.evergrowfinance.dto;
 import lombok.Data;
 
 @Data
-public class TransferResponse {
+public class TransferResponseDTO {
     private String message;
-    public TransferResponse(String message) {
+    public TransferResponseDTO(String message) {
         this.message = message;
     }
 }

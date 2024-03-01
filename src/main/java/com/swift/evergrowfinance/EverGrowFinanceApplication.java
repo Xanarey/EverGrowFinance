@@ -8,6 +8,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication
 @EnableCaching
 @EnableScheduling
+//@EnableConfigurationProperties({JwtProperties.class, CacheProperties.class})
 public class EverGrowFinanceApplication {
 
     public static void main(String[] args) {

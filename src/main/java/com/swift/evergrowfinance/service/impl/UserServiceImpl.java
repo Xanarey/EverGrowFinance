@@ -1,16 +1,22 @@
 package com.swift.evergrowfinance.service.impl;
 
+import com.swift.evergrowfinance.dto.UserUpdateEmailDTO;
 import com.swift.evergrowfinance.model.entities.User;
 import com.swift.evergrowfinance.repository.UserRepository;
 import com.swift.evergrowfinance.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
@@ -18,10 +24,12 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private CacheManager cacheManager;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, CacheManager cacheManager) {
         this.userRepository = userRepository;
+        this.cacheManager = cacheManager;
     }
 
     @Override
@@ -30,14 +38,14 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll();
     }
 
-    @Cacheable(value = "users", key = "#email")
+    @Cacheable(value = "users", key = "#email", unless = "#result == null")
     @Override
     public Optional<User> getUserByEmail(String email) {
         log.info("IN UserServiceImpl getUserByEmail {}", email);
         return userRepository.findByEmail(email);
     }
 
-    @Cacheable(value = "users", key = "#id")
+    @Cacheable(value = "users", key = "#id", unless = "#result == null")
     @Override
     public Optional<User> getUserServById(Long id) {
         log.info("IN UserServiceImpl getUserById {}", id);
@@ -64,4 +72,22 @@ public class UserServiceImpl implements UserService {
         log.info("IN UserServiceImpl delete {}", user);
         userRepository.delete(user);
     }
+
+    @Transactional
+    @Override
+    public void updateEmail(User user, UserUpdateEmailDTO userUpdateEmailDTO) {
+        String oldEmail = user.getEmail();
+        if (userRepository.findByEmail(userUpdateEmailDTO.getEmail()).isPresent()) {
+            throw new IllegalArgumentException("Email уже используется");
+        }
+
+        user.setEmail(userUpdateEmailDTO.getEmail());
+        User updatedUser = update(user);
+
+        Objects.requireNonNull(cacheManager.getCache("users")).evict(oldEmail);
+        Objects.requireNonNull(cacheManager.getCache("users")).put(updatedUser.getEmail(), updatedUser);
+
+        log.info("IN UserServiceImpl updateEmail {}", user);
+    }
+
 }

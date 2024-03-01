@@ -1,6 +1,6 @@
 package com.swift.evergrowfinance.service.impl;
 
-import com.swift.evergrowfinance.dto.MoneyTransferRequest;
+import com.swift.evergrowfinance.dto.MoneyTransferRequestDTO;
 import com.swift.evergrowfinance.exceptions.InsufficientFundsException;
 import com.swift.evergrowfinance.exceptions.InvalidTransactionException;
 import com.swift.evergrowfinance.exceptions.WalletNotFoundException;
@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 
 @Service
 @Slf4j
-public class MoneyTransferServiceImpl implements MoneyTransferService {
+public class TransferServiceImpl implements MoneyTransferService {
 
     private static final String PHONE_REGEX = "(8|\\+7)\\d{10}";
     private static final Pattern PHONE_PATTERN = Pattern.compile(PHONE_REGEX);
@@ -32,7 +32,7 @@ public class MoneyTransferServiceImpl implements MoneyTransferService {
     private final TransactionService transactionService;
 
     @Autowired
-    public MoneyTransferServiceImpl(WalletRepository walletRepository, WalletService walletService, UserService userService, TransactionService transactionService) {
+    public TransferServiceImpl(WalletRepository walletRepository, WalletService walletService, UserService userService, TransactionService transactionService) {
         this.walletRepository = walletRepository;
         this.walletService = walletService;
         this.userService = userService;
@@ -41,7 +41,7 @@ public class MoneyTransferServiceImpl implements MoneyTransferService {
 
     @Transactional
     @Override
-    public void transferMoney(User user, MoneyTransferRequest request) {
+    public void transferMoney(User user, MoneyTransferRequestDTO request) {
         if (!PHONE_PATTERN.matcher(request.getSenderPhoneNumber()).matches() || !PHONE_PATTERN.matcher(request.getRecipientPhoneNumber()).matches()) {
             throw new IllegalArgumentException("Неверный формат номера телефона");
         }

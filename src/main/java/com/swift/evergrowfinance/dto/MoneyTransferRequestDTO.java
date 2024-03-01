@@ -7,7 +7,7 @@ import lombok.Data;
 import java.math.BigDecimal;
 
 @Data
-public class MoneyTransferRequest {
+public class MoneyTransferRequestDTO {
     private BigDecimal amount;
     private Currency currency;
     private String senderPhoneNumber;
@@ -15,7 +15,7 @@ public class MoneyTransferRequest {
     private String description;
     private TransactionType type;
 
-    public MoneyTransferRequest(BigDecimal amount, Currency currency, String senderPhoneNumber, String recipientPhoneNumber, String description, TransactionType type) {
+    public MoneyTransferRequestDTO(BigDecimal amount, Currency currency, String senderPhoneNumber, String recipientPhoneNumber, String description, TransactionType type) {
         this.amount = amount;
         this.currency = currency;
         this.senderPhoneNumber = senderPhoneNumber;

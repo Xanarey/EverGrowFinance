@@ -1,6 +1,6 @@
 package com.swift.evergrowfinance.controller;
 
-import com.swift.evergrowfinance.dto.SubscriptionRequest;
+import com.swift.evergrowfinance.dto.SubscriptionRequestDTO;
 import com.swift.evergrowfinance.model.entities.User;
 import com.swift.evergrowfinance.model.entities.Wallet;
 import com.swift.evergrowfinance.service.SubscriptionsService;
@@ -13,24 +13,23 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/subscriptions")
-public class UserSubscription {
+public class UserSubscriptionController {
 
     private final UserService userService;
     private final SubscriptionsService subscriptionsService;
 
     @Autowired
-    public UserSubscription(UserService userService, SubscriptionsService subscriptionsService) {
+    public UserSubscriptionController(UserService userService, SubscriptionsService subscriptionsService) {
         this.userService = userService;
         this.subscriptionsService = subscriptionsService;
     }
 
     @PostMapping("/create")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public String createKinopoiskSubscription(@RequestBody SubscriptionRequest request) {
+    public String createKinopoiskSubscription(@RequestBody SubscriptionRequestDTO request) {
         User userContextHolder = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 

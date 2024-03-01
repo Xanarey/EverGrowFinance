@@ -11,18 +11,18 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-    @Repository
-    public interface UserRepository extends JpaRepository<User, Long> {
+@Repository
+public interface UserRepository extends JpaRepository<User, Long> {
 
-        Optional<User> findUserById(Long id);
+    Optional<User> findUserById(Long id);
 
-        @Cacheable(value = "users", key = "#email")
-        Optional<User> findByEmail(String email);
+    @Cacheable(value = "users", key = "#email")
+    Optional<User> findByEmail(String email);
 
-        @EntityGraph(attributePaths = {"wallets"})
-        @NonNull
-        List<User> findAll();
+    @EntityGraph(attributePaths = {"wallets"})
+    @NonNull
+    List<User> findAll();
 
-        @Query("SELECT u FROM User u JOIN FETCH u.subscriptions")
-        List<User> findAllBySubscriptions();
-    }
+    @Query("SELECT u FROM User u JOIN FETCH u.subscriptions")
+    List<User> findAllBySubscriptions();
+}

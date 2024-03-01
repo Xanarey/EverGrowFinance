@@ -1,6 +1,6 @@
 package com.swift.evergrowfinance.service.impl;
 
-import com.swift.evergrowfinance.dto.MoneyTransferRequest;
+import com.swift.evergrowfinance.dto.MoneyTransferRequestDTO;
 import com.swift.evergrowfinance.model.entities.Transaction;
 import com.swift.evergrowfinance.repository.TransactionRepository;
 import com.swift.evergrowfinance.service.TransactionService;
@@ -38,7 +38,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Transactional
     @Override
-    public void savingTransaction(MoneyTransferRequest request) {
+    public void savingTransaction(MoneyTransferRequestDTO request) {
         Transaction transaction = new Transaction();
         transaction.setAmount(request.getAmount());
         transaction.setCurrency(request.getCurrency());
