@@ -13,6 +13,7 @@ import com.swift.evergrowfinance.service.UserService;
 import com.swift.evergrowfinance.service.WalletService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,6 +40,7 @@ public class TransferServiceImpl implements MoneyTransferService {
         this.transactionService = transactionService;
     }
 
+    @CachePut(value = "users", key = "#user.id")
     @Transactional
     @Override
     public void transferMoney(User user, MoneyTransferRequestDTO request) {
@@ -72,15 +74,23 @@ public class TransferServiceImpl implements MoneyTransferService {
             throw new InsufficientFundsException("Недостаточно средств на счету для перевода");
         }
 
+        Wallet walletFr = walletFrom;
+        Wallet walletT = walletTo;
+
         walletFrom.setBalance(walletFrom.getBalance().subtract(request.getAmount()));
         walletTo.setBalance(walletTo.getBalance().add(request.getAmount()));
 
         walletService.update(walletFrom);
         walletService.update(walletTo);
-        transactionService.savingTransaction(request);
 
-        userService.update(walletFrom.getUser());
-        userService.update(walletTo.getUser());
+
+        User one = walletFr.getUser();
+        User two = walletT.getUser();
+
+        userService.update(one);
+        userService.update(two);
+
+        transactionService.savingTransaction(one, request);
 
         log.info("Перевод средств выполнен: с {} на {}, сумма: {}", request.getSenderPhoneNumber(), request.getRecipientPhoneNumber(),request.getAmount());
     }

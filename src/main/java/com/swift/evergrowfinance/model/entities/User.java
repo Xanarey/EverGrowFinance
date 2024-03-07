@@ -36,4 +36,8 @@ public class User implements Serializable {
     @JsonManagedReference
     private List<Subscription> subscriptions = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JsonManagedReference
+    private List<Transaction> transactions = new ArrayList<>();
+
 }

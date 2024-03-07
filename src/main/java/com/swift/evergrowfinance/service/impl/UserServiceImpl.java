@@ -24,12 +24,12 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final CacheManager cacheManager;
+//    private final CacheManager cacheManager;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, CacheManager cacheManager) {
+    public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.cacheManager = cacheManager;
+
     }
 
     @Override
@@ -84,8 +84,8 @@ public class UserServiceImpl implements UserService {
         user.setEmail(userUpdateEmailDTO.getEmail());
         User updatedUser = update(user);
 
-        Objects.requireNonNull(cacheManager.getCache("users")).evict(oldEmail);
-        Objects.requireNonNull(cacheManager.getCache("users")).put(updatedUser.getEmail(), updatedUser);
+//        Objects.requireNonNull(cacheManager.getCache("users")).evict(oldEmail);
+//        Objects.requireNonNull(cacheManager.getCache("users")).put(updatedUser.getEmail(), updatedUser);
 
         log.info("IN UserServiceImpl updateEmail {}", user);
     }

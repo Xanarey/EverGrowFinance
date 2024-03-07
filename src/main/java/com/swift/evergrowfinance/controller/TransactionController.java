@@ -1,5 +1,6 @@
 package com.swift.evergrowfinance.controller;
 
+import com.swift.evergrowfinance.dto.TransactionDTO;
 import com.swift.evergrowfinance.model.entities.Transaction;
 import com.swift.evergrowfinance.model.entities.User;
 import com.swift.evergrowfinance.service.TransactionService;
@@ -14,7 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/transactions")
@@ -45,9 +48,16 @@ public class TransactionController {
 
     @GetMapping("/my")
     @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
-    public List<Transaction> getMyTransactionsHistory() {
+    public List<TransactionDTO> getMyTransactionsHistory() {
         User user = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
-        return transactionService.getTransactionsForUser(user.getId());
+        List<TransactionDTO> transactionDTOS =
+                transactionService.getTransactionsForUser(user.getId()).stream()
+                        .map(TransactionDTO::transactionDTO)
+                        .toList();
+        transactionDTOS = transactionDTOS.stream()
+                .sorted(Comparator.comparing(TransactionDTO::getDateTime).reversed())
+                .toList();
+        return transactionDTOS;
     }
 }

@@ -6,6 +6,7 @@ import com.swift.evergrowfinance.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -36,5 +38,19 @@ public class UserBalanceController {
         return user.getWallets().stream()
                 .map(UserBalanceDTO::fromWallet)
                 .collect(Collectors.toList());
+    }
+
+    @GetMapping("/my")
+    @PreAuthorize("hasAnyAuthority('USER')")
+    public List<UserBalanceDTO> getUserBalancePersonal() {
+        Optional<User> userOptional = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+
+        User user = userOptional.get();
+
+        List<UserBalanceDTO> userBalanceDTOS = user.getWallets().stream()
+                .map(UserBalanceDTO::fromWallet)
+                .toList();
+
+        return userBalanceDTOS;
     }
 }

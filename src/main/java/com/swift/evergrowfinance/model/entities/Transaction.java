@@ -1,10 +1,12 @@
 package com.swift.evergrowfinance.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.swift.evergrowfinance.model.enums.Currency;
 import com.swift.evergrowfinance.model.enums.TransactionStatus;
 import com.swift.evergrowfinance.model.enums.TransactionType;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -46,4 +48,9 @@ public class Transaction implements Serializable {
     @Column(name = "description")
     private String description;
 
+    @ToString.Exclude
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    @JsonBackReference
+    private User user;
 }
