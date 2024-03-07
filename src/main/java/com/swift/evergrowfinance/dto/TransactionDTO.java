@@ -4,9 +4,6 @@ import com.swift.evergrowfinance.model.entities.Transaction;
 import com.swift.evergrowfinance.model.enums.Currency;
 import com.swift.evergrowfinance.model.enums.TransactionStatus;
 import com.swift.evergrowfinance.model.enums.TransactionType;
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import lombok.Builder;
 import lombok.Data;
 
