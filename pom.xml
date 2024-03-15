@@ -11,7 +11,6 @@
     <groupId>com.swift</groupId>
     <artifactId>EverGrowFinance</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <packaging>war</packaging>
     <name>EverGrowFinance</name>
     <description>EverGrowFinance</description>
     <properties>
@@ -26,11 +25,19 @@
         <spring.boot.data.redis.version>3.2.2</spring.boot.data.redis.version>
         <jjwt.version>0.11.5</jjwt.version>
         <spring.security.core.version>6.2.2</spring.security.core.version>
-        <postgresql.version>42.7.2</postgresql.version>
+        <postgresql.version>42.7.3</postgresql.version>
         <validator.version>1.8.0</validator.version>
     </properties>
 
     <dependencies>
+        <!-- https://mvnrepository.com/artifact/org.liquibase/liquibase-core -->
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+            <version>4.26.0</version>
+        </dependency>
+
+
         <dependency>
             <groupId>commons-validator</groupId>
             <artifactId>commons-validator</artifactId>
@@ -181,6 +188,14 @@
                     <compilerArguments>
                         <arg>-parameters</arg>
                     </compilerArguments>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.liquibase</groupId>
+                <artifactId>liquibase-maven-plugin</artifactId>
+                <version>4.26.0</version>
+                <configuration>
+                    <propertyFile>src/main/resources/liquibase.properties</propertyFile>
                 </configuration>
             </plugin>
         </plugins>
