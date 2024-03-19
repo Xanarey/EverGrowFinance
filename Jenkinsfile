@@ -1,30 +1,52 @@
 pipeline {
     agent any
-
+    environment {
+        // Определяем переменную для Docker image
+        DOCKER_IMAGE = 'evergrowfinance/backend'
+        // Указываем адрес регистра для Docker
+        DOCKER_REGISTRY = 'registry.hub.docker.com'
+        // Версия для Docker-образа
+        IMAGE_TAG = 'latest'
+        // Доменное имя для развертывания
+        DEPLOY_DOMAIN = '51.250.90.24'
+    }
     stages {
         stage('Checkout') {
             steps {
-                // Получение последней версии из репозитория
-                git 'https://github.com/Xanarey/EverGrowFinance'
+                // Получаем код из GitHub
+                checkout scm
             }
         }
-
-        stage('Build and Push Docker Image') {
+        stage('Build') {
             steps {
-                // Здесь должны быть команды для сборки Docker образа
-                sh 'docker build -t evergrowfinance-backend .'
-                // Затем пушим образ в ваш Docker репозиторий
-                sh 'docker push evergrowfinance-backend'
+                // Собираем проект, можно использовать скрипт или Maven plugin
+                sh 'mvn clean package -DskipTests'
             }
         }
-
-        stage('Deploy to Yandex Cloud') {
+        stage('Build Docker Image') {
             steps {
-                // Замена localhost на IP в docker-compose.yml
-                sh "sed -i 's/localhost/51.250.90.24/g' docker-compose.yml"
-                // Запуск docker-compose для деплоя
-                sh 'docker-compose up -d backend'
+                // Собираем Docker-образ
+                sh "docker build -t ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${IMAGE_TAG} ."
             }
+        }
+        stage('Push Docker Image') {
+            steps {
+                // Публикуем образ в регистр
+                sh "docker push ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${IMAGE_TAG}"
+            }
+        }
+        stage('Deploy') {
+            steps {
+                // Выполняем деплой используя docker-compose и подменяем домен
+                sh "sed -i 's/localhost/${DEPLOY_DOMAIN}/g' docker-compose.yml"
+                sh "docker-compose up -d"
+            }
+        }
+    }
+    post {
+        always {
+            // Чистим после себя, удаляем образ
+            sh "docker rmi ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${IMAGE_TAG}"
         }
     }
 }
