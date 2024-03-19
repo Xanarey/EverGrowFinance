@@ -2,12 +2,12 @@ pipeline {
     agent any
 
     tools {
-            maven 'M3'
-        }
-
+        // Указываем Jenkins использовать Maven с именем 'M3'
+        maven 'M3'
+    }
 
     environment {
-        // Определите переменные окружения, если нужно
+        // Задаем переменные среды
         MAVEN_OPTS = '-Dmaven.test.skip=true'
     }
 
@@ -22,7 +22,7 @@ pipeline {
         stage('Build') {
             steps {
                 // Запускаем сборку Maven без тестов
-                sh '/path/to/mvn clean package -DskipTests'
+                sh 'mvn clean package -DskipTests'
             }
         }
 
@@ -31,16 +31,15 @@ pipeline {
                 // Копируем всю папку проекта на сервер
                 sh 'scp -r /Users/engend/Desktop/ever-remote engend@51.250.90.24:~'
                 // Выполняем деплой с помощью docker-compose
-                sh 'ssh engend@51.250.90.24 docker-compose -f ~/ever-remote/EverGrowFinance/docker-compose.yml up -d backend'
+                sh 'ssh engend@51.250.90.24 "docker-compose -f ~/ever-remote/EverGrowFinance/docker-compose.yml up -d backend"'
             }
         }
-
     }
 
     post {
         // Действия после выполнения пайплайна
         always {
-            // Например, удалить Docker образы с Jenkins агента
+            // Удалить рабочий каталог после выполнения сборки
             cleanWs()
         }
     }
