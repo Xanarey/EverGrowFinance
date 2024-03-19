@@ -1,11 +1,6 @@
 pipeline {
     agent any
 
-    tools {
-        // Указываем Jenkins использовать Maven с именем 'M3'
-        maven 'M3'
-    }
-
     environment {
         // Задаем переменные среды
         MAVEN_OPTS = '-Dmaven.test.skip=true'
