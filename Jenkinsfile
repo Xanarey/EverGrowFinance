@@ -14,11 +14,10 @@ pipeline {
         }
 
         stage('Build') {
-            steps {
-                sh 'echo $PATH' // Print PATH variable for debugging
-                sh './mvnw clean package -DskipTests' // Use Maven Wrapper
-            }
-        }
+                    steps {
+                        sh 'mvn clean package -DskipTests'
+                    }
+                }
 
         stage('Deploy to Yandex Cloud') {
             steps {
