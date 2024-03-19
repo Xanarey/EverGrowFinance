@@ -14,11 +14,13 @@ pipeline {
             steps {
                 script {
                     // Заменяем localhost на IP адрес сервера в docker-compose.yml
-                    sh "sed -i '' 's/localhost/${SERVER_IP}/g' ${DEPLOY_PATH}/docker-compose.yml"
+//                     sh "sed -i '' 's/localhost/${SERVER_IP}/g' ${DEPLOY_PATH}/docker-compose.yml"
+                    sh "sed -i 's/localhost/${SERVER_IP}/g' ${DEPLOY_PATH}/docker-compose.yml"
+
                     // Подключаемся по SSH и запускаем сборку и деплой
-                    ssh-agent(['ssh-credentials-id']) {
+                    sshagent(['ssh-credentials-id']) {
                         // Копируем исходники на сервер
-                        sh "scp -r ${DEPLOY_PATH}/* engend@${SERVER_IP}:/path/to/remote/directory"
+                        sh "scp -r ${DEPLOY_PATH}/* engend@${SERVER_IP}:~"
                         // Выполняем сборку и запуск через docker-compose на сервере
                         sh "ssh engend@${SERVER_IP} 'cd /path/to/remote/directory && docker-compose up -d --build'"
                     }
