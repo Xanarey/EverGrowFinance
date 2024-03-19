@@ -1,52 +1,50 @@
 pipeline {
     agent any
     environment {
-        // Определяем переменную для Docker image
-        DOCKER_IMAGE = 'evergrowfinance/backend'
-        // Указываем адрес регистра для Docker
-        DOCKER_REGISTRY = 'registry.hub.docker.com'
-        // Версия для Docker-образа
-        IMAGE_TAG = 'latest'
-        // Доменное имя для развертывания
-        DEPLOY_DOMAIN = '51.250.90.24'
+        DOCKER_IMAGE = 'evergrowfinance:latest'
+        DEPLOY_PATH = '/Users/engend/Desktop/ever-remote/EverGrowFinance'
+        SERVER_IP = '51.250.90.24'
     }
     stages {
-        stage('Checkout') {
+        stage('Clone repository') {
             steps {
-                // Получаем код из GitHub
-                checkout scm
+                git 'https://github.com/Xanarey/EverGrowFinance.git'
             }
         }
-        stage('Build') {
+        stage('Build Docker image') {
             steps {
-                // Собираем проект, можно использовать скрипт или Maven plugin
-                sh 'mvn clean package -DskipTests'
+                script {
+                    docker.build("${DOCKER_IMAGE}")
+                }
             }
         }
-        stage('Build Docker Image') {
+        stage('Push Docker image') {
             steps {
-                // Собираем Docker-образ
-                sh "docker build -t ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${IMAGE_TAG} ."
+                script {
+                    docker.withRegistry('', 'docker-credentials-id') {
+                        docker.image("${DOCKER_IMAGE}").push()
+                    }
+                }
             }
         }
-        stage('Push Docker Image') {
+        stage('Deploy to Yandex Cloud') {
             steps {
-                // Публикуем образ в регистр
-                sh "docker push ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${IMAGE_TAG}"
-            }
-        }
-        stage('Deploy') {
-            steps {
-                // Выполняем деплой используя docker-compose и подменяем домен
-                sh "sed -i 's/localhost/${DEPLOY_DOMAIN}/g' docker-compose.yml"
-                sh "docker-compose up -d"
+                script {
+                    // Заменяем localhost на IP адрес сервера в docker-compose.yml
+                    sh "sed -i '' 's/localhost/${SERVER_IP}/g' ${DEPLOY_PATH}/docker-compose.yml"
+                    // Подключаемся по SSH и запускаем docker-compose
+                    sshagent(['ssh-credentials-id']) {
+                        sh "scp ${DEPLOY_PATH}/docker-compose.yml engend@${SERVER_IP}:/path/to/remote/directory"
+                        sh "ssh engend@${SERVER_IP} 'docker-compose -f /path/to/remote/directory/docker-compose.yml up -d --build'"
+                    }
+                }
             }
         }
     }
     post {
         always {
-            // Чистим после себя, удаляем образ
-            sh "docker rmi ${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${IMAGE_TAG}"
+            echo 'Cleaning up'
+            cleanWs()
         }
     }
 }
