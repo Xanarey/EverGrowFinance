@@ -1,6 +1,12 @@
 pipeline {
     agent any
 
+    tools {
+            // Указывает Jenkins использовать Maven версии 'M3', которая определена в Global Tool Configuration
+            maven 'M3'
+        }
+
+
     environment {
         // Определите переменные окружения, если нужно
         MAVEN_OPTS = '-Dmaven.test.skip=true'
