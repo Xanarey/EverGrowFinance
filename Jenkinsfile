@@ -2,8 +2,9 @@ pipeline {
     agent any
 
     environment {
-        MAVEN_OPTS = '-Dmaven.test.skip=true'
-    }
+            MAVEN_HOME = '/path/to/maven' // Specify Maven installation directory
+            PATH = "$MAVEN_HOME/bin:$PATH" // Add Maven bin directory to PATH
+        }
 
     stages {
         stage('Checkout') {
