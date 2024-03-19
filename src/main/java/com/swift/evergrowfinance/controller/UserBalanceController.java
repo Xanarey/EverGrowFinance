@@ -41,7 +41,7 @@ public class UserBalanceController {
     }
 
     @GetMapping("/my")
-    @PreAuthorize("hasAnyAuthority('USER')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
     public List<UserBalanceDTO> getUserBalancePersonal() {
         Optional<User> userOptional = userService.getUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
 
