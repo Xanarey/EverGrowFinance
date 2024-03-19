@@ -16,7 +16,6 @@ pipeline {
         stage('Build') {
             steps {
                 sh 'echo $PATH' // Print PATH variable for debugging
-                sh 'which mvn'  // Check the location of mvn
                 sh './mvnw clean package -DskipTests' // Use Maven Wrapper
             }
         }
