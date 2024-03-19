@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    tools {
+            maven 'MavenInstallationName' // Use the name of the Maven installation configured in Jenkins
+        }
+
     environment {
             MAVEN_HOME = '/path/to/maven' // Specify Maven installation directory
             PATH = "$MAVEN_HOME/bin:$PATH" // Add Maven bin directory to PATH
