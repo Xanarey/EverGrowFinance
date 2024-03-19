@@ -1,8 +1,7 @@
 pipeline {
     agent any
     environment {
-        DEPLOY_PATH = '/Users/engend/IdeaProjects/EverGrowFinance'
-        SERVER_IP = '51.250.90.24'
+
     }
     stages {
         stage('Clone repository') {
@@ -16,9 +15,9 @@ pipeline {
                     // Подключаемся по SSH и запускаем сборку и деплой
                     sshagent(['ever-id-engend']) {
                         // Копируем исходники на сервер
-                        sh "scp -r ${DEPLOY_PATH}/* engend@${SERVER_IP}:~"
+                        sh "scp -r /Users/engend/Desktop/ever-remote engend@51.250.90.24:~"
                         // Выполняем сборку и запуск через docker-compose на сервере
-                        sh "ssh engend@${SERVER_IP} 'docker-compose up -d --build'"
+                        sh "ssh engend@51.250.90.24 'docker-compose up -d --build'"
                     }
                 }
             }
