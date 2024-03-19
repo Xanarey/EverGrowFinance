@@ -2,22 +2,30 @@ pipeline {
     agent any
 
     tools {
-        maven 'MavenInstallationName' // Используем имя установки Maven, настроенной в Jenkins
+            // Используем Maven, настроенный в Global Tool Configuration Jenkins
+            maven 'M3'
+        }
+
+    environment {
+            // Определите переменные окружения, если нужно
+            MAVEN_OPTS = '-Dmaven.test.skip=true'
     }
 
-    stages {
-        stage('Отладка') {
-            steps {
-                sh 'echo $PATH' // Вывести значение переменной PATH для отладки
-                sh 'which mvn'  // Проверить местоположение исполняемого файла mvn
-            }
-        }
 
-        stage('Получение кода') {
-            steps {
-                git 'https://github.com/Xanarey/EverGrowFinance.git'
-            }
-        }
+    stages {
+        stage('Checkout') {
+                    steps {
+                        // Получаем код из репозитория GitHub
+                        git 'https://github.com/Xanarey/EverGrowFinance.git'
+                    }
+                }
+
+        stage('Build') {
+                    steps {
+                        // Запускаем сборку Maven без тестов
+                        sh 'mvn clean package -DskipTests'
+                    }
+                }
 
         stage('Сборка') {
             steps {
