@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        DOCKER_IMAGE = 'evergrowfinance:latest'
+        DOCKER_IMAGE = 'evergrowfinance-backend'
         DEPLOY_PATH = '/Users/engend/Desktop/ever-remote/EverGrowFinance'
         SERVER_IP = '51.250.90.24'
     }
