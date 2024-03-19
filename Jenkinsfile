@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        DEPLOY_PATH = '/Users/engend/Desktop/ever-remote/EverGrowFinance'
+        DEPLOY_PATH = '/Users/engend/IdeaProjects/EverGrowFinance'
         SERVER_IP = '51.250.90.24'
     }
     stages {
