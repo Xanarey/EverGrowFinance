@@ -16,7 +16,7 @@ pipeline {
                     sshagent(['ever-id-engend']) {
                         // Копируем исходники на сервер
                         sh "scp -r /Users/engend/Desktop/ever-remote engend@51.250.90.24:~"
-                        sh "ssh engend@51.250.90.24 'docker-compose up -d --build'"
+                        sh "ssh engend@51.250.90.24 'cd ~/ever-remote/EverGrowFinance && docker-compose up -d --build'"
                     }
                 }
             }
