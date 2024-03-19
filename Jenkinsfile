@@ -17,18 +17,19 @@ pipeline {
         stage('Build') {
             steps {
                 // Запускаем сборку Maven без тестов
-                sh 'mvn clean package'
+                sh '/path/to/mvn clean package -DskipTests'
             }
         }
 
         stage('Deploy to Yandex Cloud') {
             steps {
-                // Заменяем localhost на IP-адрес и деплоим используя docker-compose
-                sh 'sed -i "s/localhost/51.250.90.24/g" src/main/resources/application.properties'
-                sh 'scp docker-compose.yml engend@51.250.90.24:/path/to/remote'
-                sh 'ssh engend@51.250.90.24 docker-compose up -d backend'
+                // Копируем всю папку проекта на сервер
+                sh 'scp -r /Users/engend/Desktop/ever-remote engend@51.250.90.24:~'
+                // Выполняем деплой с помощью docker-compose
+                sh 'ssh engend@51.250.90.24 docker-compose -f ~/ever-remote/EverGrowFinance/docker-compose.yml up -d backend'
             }
         }
+
     }
 
     post {
