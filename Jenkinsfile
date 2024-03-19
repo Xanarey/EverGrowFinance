@@ -13,11 +13,8 @@ pipeline {
         stage('Deploy to Yandex Cloud') {
             steps {
                 script {
-                    // Заменяем localhost на IP адрес сервера в docker-compose.yml
-                    sh "sed -i '' 's/localhost/${SERVER_IP}/g' ${DEPLOY_PATH}/docker-compose.yml"
-
                     // Подключаемся по SSH и запускаем сборку и деплой
-                    sshagent(['ever-id-engend']) { // Используйте здесь ID созданных учётных данных
+                    sshagent(['ever-id-engend']) {
                         // Копируем исходники на сервер
                         sh "scp -r ${DEPLOY_PATH}/* engend@${SERVER_IP}:~"
                         // Выполняем сборку и запуск через docker-compose на сервере
