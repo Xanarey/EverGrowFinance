@@ -21,16 +21,6 @@ pipeline {
             }
         }
 
-        stage('Docker Build and Push') {
-            steps {
-                // Собираем Docker образ и пушим его в ваш Docker registry
-                script {
-                    def app = docker.build("your-docker-registry/evergrowfinance:$BUILD_NUMBER")
-                    app.push()
-                }
-            }
-        }
-
         stage('Deploy to Yandex Cloud') {
             steps {
                 // Заменяем localhost на IP-адрес и деплоим используя docker-compose
