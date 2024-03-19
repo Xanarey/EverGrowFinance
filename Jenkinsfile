@@ -7,6 +7,13 @@ pipeline {
         }
 
     stages {
+    stage('Debug') {
+                steps {
+                    sh 'echo $PATH' // Print PATH variable for debugging
+                    sh 'which mvn'  // Check the location of mvn
+                }
+            }
+
         stage('Checkout') {
             steps {
                 git 'https://github.com/Xanarey/EverGrowFinance.git'
