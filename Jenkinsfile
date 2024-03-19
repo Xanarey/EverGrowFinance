@@ -16,7 +16,7 @@ pipeline {
                     // Заменяем localhost на IP адрес сервера в docker-compose.yml
                     sh "sed -i '' 's/localhost/${SERVER_IP}/g' ${DEPLOY_PATH}/docker-compose.yml"
                     // Подключаемся по SSH и запускаем сборку и деплой
-                    sshagent(['ssh-credentials-id']) {
+                    ssh-agent(['ssh-credentials-id']) {
                         // Копируем исходники на сервер
                         sh "scp -r ${DEPLOY_PATH}/* engend@${SERVER_IP}:/path/to/remote/directory"
                         // Выполняем сборку и запуск через docker-compose на сервере
