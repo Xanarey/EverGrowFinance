@@ -22,7 +22,7 @@ pipeline {
         stage('Build') {
             steps {
                 // Запускаем сборку Maven без тестов
-                sh 'mvn clean package -DskipTests'
+                sh 'mvn clean  -DskipTests'
             }
         }
 
