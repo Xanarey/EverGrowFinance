@@ -29,7 +29,7 @@ pipeline {
         stage('Deploy to Yandex Cloud') {
             steps {
                 // Теперь копируем только бэкенд
-                sh 'scp -r /Users/engend/IdeaProjects/EverGrowFinance engend@51.250.90.24:~/ever-remote'
+                sh 'scp -r /Users/engend/IdeaProjects/EverGrowFinance engend@51.250.90.24:~'
                 sh 'ssh engend@51.250.90.24 "docker-compose -f ~/EverGrowFinance/docker-compose.yml up -d backend"'
             }
         }
