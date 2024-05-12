@@ -19,12 +19,12 @@ pipeline {
             }
         }
 
-        stage('Build') {
-            steps {
-                // Запускаем сборку Maven без тестов
-                sh 'mvn -T 1C clean package -DskipTests'
-            }
-        }
+//         stage('Build') {
+//             steps {
+//                 // Запускаем сборку Maven без тестов
+//                 sh 'mvn -T 1C clean package -DskipTests'
+//             }
+//         }
 
         stage('Deploy to Yandex Cloud') {
             steps {
