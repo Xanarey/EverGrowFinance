@@ -28,9 +28,9 @@ pipeline {
 
         stage('Deploy to Yandex Cloud') {
             steps {
-            sh 'scp -r /Users/engend/IdeaProjects/EverGrowFinance engend@51.250.90.24:~'
-                sh 'scp target/EverGrowFinance-0.0.1-SNAPSHOT.jar engend@51.250.90.24:~/EverGrowFinance'
-                sh 'ssh engend@51.250.90.24 "docker-compose -f ~/EverGrowFinance/docker-compose.yml up -d backend"'
+            sh 'scp -r /Users/engend/IdeaProjects/EverGrowFinance engend@84.201.138.119:~'
+                sh 'scp target/EverGrowFinance-0.0.1-SNAPSHOT.jar engend@84.201.138.119:~/EverGrowFinance'
+                sh 'ssh engend@84.201.138.119 "docker-compose -f ~/EverGrowFinance/docker-compose.yml up -d backend"'
             }
         }
     }
