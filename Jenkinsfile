@@ -3,8 +3,9 @@ pipeline {
 
     environment {
         SERVER_IP = '84.201.138.119'
-        REMOTE_PATH = '~/evergrowfinance'
+        REMOTE_PATH = '~'
         DOCKER_COMPOSE_FILE = 'docker-compose.yml'
+        DOCKER_FILE = 'Dockerfile'
     }
 
     stages {
@@ -38,7 +39,7 @@ pipeline {
                     sh "scp -i /Users/engend/Desktop/keys/edKey /Users/engend/IdeaProjects/EverGrowFinance/evergrowfinance-backend.tar ever-admin@${SERVER_IP}:${REMOTE_PATH}"
                     sh "scp -i /Users/engend/Desktop/keys/edKey /Users/engend/IdeaProjects/EverGrowFinance/postgres.tar ever-admin@${SERVER_IP}:${REMOTE_PATH}"
                     sh "scp -i /Users/engend/Desktop/keys/edKey /Users/engend/IdeaProjects/EverGrowFinance/${DOCKER_COMPOSE_FILE} ever-admin@${SERVER_IP}:${REMOTE_PATH}"
-                    sh "scp -r -i /Users/engend/Desktop/keys/edKey /Users/engend/IdeaProjects/EverGrowFinance/Dockerfile ever-admin@${SERVER_IP}:${REMOTE_PATH}"
+                    sh "scp -r -i /Users/engend/Desktop/keys/edKey /Users/engend/IdeaProjects/EverGrowFinance/${DOCKER_FILE} ever-admin@${SERVER_IP}:${REMOTE_PATH}"
                     sh "scp -r -i /Users/engend/Desktop/keys/edKey /Users/engend/IdeaProjects/EverGrowFinance/target ever-admin@${SERVER_IP}:${REMOTE_PATH}"
 
                     // SSH на сервер для загрузки образов и запуска с помощью Docker Compose
