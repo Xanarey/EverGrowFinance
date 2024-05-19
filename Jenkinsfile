@@ -35,8 +35,9 @@ pipeline {
                     sh """
                         ssh -i /Users/engend/Desktop/keys/edKey ever-admin@${SERVER_IP} '
                         cd ${REMOTE_PATH}
-                        docker rmi -f evergrowfinance-backend
-                        docker rmi -f postgres
+                        rm -f docker-compose.yml
+                        rm -f Dockerfile
+                        rm -rf target
                         docker-compose down
                         docker system prune -a -f
                         docker-compose up --build -d
