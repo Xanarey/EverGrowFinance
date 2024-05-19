@@ -60,10 +60,6 @@
 //
 
 
-
-
-
-
 pipeline {
     agent any
 
