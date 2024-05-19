@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         SERVER_IP = '84.201.138.119'
-        REMOTE_PATH = '/'
+        REMOTE_PATH = '~'
     }
 
     stages {
@@ -33,8 +33,8 @@ pipeline {
                     // SSH в сервер для загрузки образа и запуска
                     sh """
                         ssh ${SERVER_IP} '
-                        docker load -i ${REMOTE_PATH}/evergrowfinance-backend.tar
-                        docker run -d -p 8080:8080 evergrowfinance-backend
+                        docker load -i /Users/engend/Desktop/keys/edKey evergrowfinance-backend.tar
+                        docker run -i /Users/engend/Desktop/keys/edKey -d -p 8080:8080 evergrowfinance-backend
                         '
                     """
                 }
