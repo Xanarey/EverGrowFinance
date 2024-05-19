@@ -18,9 +18,7 @@ pipeline {
                 script {
                     dir('/Users/engend/IdeaProjects/EverGrowFinance') {
                         sh 'mvn clean install -DskipTests'
-                        sh 'docker build --build-arg
-                        /Users/engend/IdeaProjects/EverGrowFinance/target/EverGrowFinance-0.0.1-SNAPSHOT.jar
-                        -t evergrowfinance-backend .'
+                        sh 'docker build --build-arg /Users/engend/IdeaProjects/EverGrowFinance/target/EverGrowFinance-0.0.1-SNAPSHOT.jar -t evergrowfinance-backend .'
                         sh 'docker save evergrowfinance-backend -o evergrowfinance-backend.tar'
                     } // /Users/engend/IdeaProjects/EverGrowFinance/target/EverGrowFinance-0.0.1-SNAPSHOT.jar
                 }
