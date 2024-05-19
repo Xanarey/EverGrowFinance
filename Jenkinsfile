@@ -34,7 +34,9 @@ pipeline {
                    sh "ssh -i /Users/engend/Desktop/keys/edKey ever-admin@${SERVER_IP} 'docker load -i ~/evergrowfinance-backend.tar && docker run -d -p 8080:8080 evergrowfinance-backend'"
                }
            }
+        } // Закрывающая скобка добавлена здесь
     }
+
     post {
         always {
             // Чистка после сборки
