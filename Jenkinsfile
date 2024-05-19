@@ -29,7 +29,7 @@ pipeline {
             steps {
                 script {
                     // Копирование образа на сервер
-                    sh "scp /Users/engend/IdeaProjects/EverGrowFinance/evergrowfinance-backend.tar ever-admin@84.201.138.119:~"
+                    sh "scp -i /Users/engend/Desktop/keys/edKey /Users/engend/IdeaProjects/EverGrowFinance/evergrowfinance-backend.tar ever-admin@84.201.138.119:~"
                     // SSH в сервер для загрузки образа и запуска
                     sh """
                         ssh ${SERVER_IP} '
