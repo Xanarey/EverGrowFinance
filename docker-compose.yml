@@ -14,7 +14,6 @@ services:
       - db-data:/var/lib/postgresql/data
 
   backend:
-    image: evergrowfinance-backend:latest
     build:
       context: .
       args:
