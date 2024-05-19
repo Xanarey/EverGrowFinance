@@ -39,7 +39,8 @@ pipeline {
                         docker rmi -f postgres
                         docker-compose down
                         docker system prune -a -f
-                        docker-compose up --build
+                        docker-compose up --build -d
+                        echo 'Docker Compose started.'
                         '
                     """
                 }
