@@ -34,7 +34,7 @@ public class UserBalanceController {
     public List<UserBalanceDTO> getUserBalance(@PathVariable Long id) {
         User user = userService.getUserServById(id)
                 .orElseThrow(() -> new UsernameNotFoundException("User with id " + id + " not found"));
-        user.setEmail("Hello Jenkins");
+
         return user.getWallets().stream()
                 .map(UserBalanceDTO::fromWallet)
                 .collect(Collectors.toList());
