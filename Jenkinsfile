@@ -16,7 +16,6 @@ pipeline {
         stage('Build Backend Docker Image') {
             steps {
                 script {
-
                     dir('/Users/engend/IdeaProjects/EverGrowFinance') {
                         sh 'mvn clean install -DskipTests'
                         sh 'docker build -t evergrowfinance-backend .'
@@ -30,7 +29,8 @@ pipeline {
             steps {
                 script {
                     // Копирование образа на сервер
-                    sh "scp /Users/engend/IdeaProjects/EverGrowFinance/evergrowfinance-backend.tar ${SERVER_IP}:${REMOTE_PATH}/"
+                    sh "scp /Users/engend/IdeaProjects/EverGrowFinance/evergrowfinance-backend.tar engend@84.201.138.119:~/
+"
                     // SSH в сервер для загрузки образа и запуска
                     sh """
                         ssh ${SERVER_IP} '
