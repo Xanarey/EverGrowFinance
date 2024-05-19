@@ -60,4 +60,4 @@ pipeline {
             sh 'rm -f /Users/engend/IdeaProjects/EverGrowFinance/evergrowfinance-backend.tar'
         }
     }
-}
+
