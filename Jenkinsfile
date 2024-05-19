@@ -15,7 +15,7 @@ pipeline {
             }
         }
 
-        stage('Build and Save Images') {
+        stage('Build') {
             steps {
                 script {
                     dir('/Users/engend/IdeaProjects/EverGrowFinance') {
