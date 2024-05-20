@@ -6,6 +6,7 @@ pipeline {
         REMOTE_PATH = '~'
         DOCKER_COMPOSE_FILE = 'docker-compose.yml'
         DOCKER_FILE = 'Dockerfile'
+        P_KEY = '/Users/engend/Desktop/keys/ubuntu-STD2-1-1-15GB-k3n66suc.pem'
     }
 
     stages {
@@ -28,12 +29,12 @@ pipeline {
         stage('Transfer and Deploy') {
             steps {
                 script {
-                    sh "scp -i /Users/engend/Desktop/keys/edKey /Users/engend/IdeaProjects/EverGrowFinance/${DOCKER_COMPOSE_FILE} ever-admin@${SERVER_IP}:${REMOTE_PATH}"
-                    sh "scp -r -i /Users/engend/Desktop/keys/edKey /Users/engend/IdeaProjects/EverGrowFinance/${DOCKER_FILE} ever-admin@${SERVER_IP}:${REMOTE_PATH}"
-                    sh "scp -r -i /Users/engend/Desktop/keys/edKey /Users/engend/IdeaProjects/EverGrowFinance/target ever-admin@${SERVER_IP}:${REMOTE_PATH}"
+                    sh "scp -i ${P_KEY} /Users/engend/IdeaProjects/EverGrowFinance/${DOCKER_COMPOSE_FILE} ever-admin@${SERVER_IP}:${REMOTE_PATH}"
+                    sh "scp -r -i ${P_KEY} /Users/engend/IdeaProjects/EverGrowFinance/${DOCKER_FILE} ever-admin@${SERVER_IP}:${REMOTE_PATH}"
+                    sh "scp -r -i ${P_KEY} /Users/engend/IdeaProjects/EverGrowFinance/target ever-admin@${SERVER_IP}:${REMOTE_PATH}"
 
                     sh """
-                        ssh -i /Users/engend/Desktop/keys/edKey ever-admin@${SERVER_IP} '
+                        ssh -i ${P_KEY} ever-admin@${SERVER_IP} '
                         cd ${REMOTE_PATH}
                         docker-compose down
                         docker system prune -a -f
