@@ -25,12 +25,12 @@ services:
     depends_on:
       - db
 
-  frontend:
-    build: ~/evergrow-bank-ui
-    ports:
-      - "80:80"
-    depends_on:
-      - backend
+#  frontend:
+#    build: ~/evergrow-bank-ui
+#    ports:
+#      - "80:80"
+#    depends_on:
+#      - backend
 
 volumes:
   db-data:

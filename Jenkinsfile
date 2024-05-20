@@ -37,9 +37,9 @@ pipeline {
                     sh """
                         ssh -i ${P_KEY} ${USER}@${SERVER_IP} '
                         cd ${REMOTE_PATH}
-                        docker-compose down
-                        docker system prune -a -f
-                        docker-compose up --build -d
+                        sudo docker-compose down
+                        sudo docker system prune -a -f
+                        sudo docker-compose up --build -d
                         echo 'Docker Compose started.'
                         '
                     """
