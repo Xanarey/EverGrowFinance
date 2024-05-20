@@ -2,12 +2,12 @@ pipeline {
     agent any
 
     environment {
-        SERVER_IP = '90.156.216.53'
+        SERVER_IP = '158.160.165.159'
         REMOTE_PATH = '~'
         DOCKER_COMPOSE_FILE = 'docker-compose.yml'
         DOCKER_FILE = 'Dockerfile'
-        P_KEY = '/Users/engend/Desktop/keys/ubuntu-STD2-1-1-15GB-k3n66suc.pem'
-        USER = 'ubuntu'
+        P_KEY = '/users/engend/desktop/keys/edkey'
+        USER = 'ever-cloud'
     }
 
     stages {
