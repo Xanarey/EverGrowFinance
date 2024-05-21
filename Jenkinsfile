@@ -10,7 +10,6 @@ pipeline {
         USER = 'ever-cloud'
 
         PRODUCTION_IP = 'http://158.160.154.130'
-        DEVELOPMENT_IP = 'http://localhost:3000'
         APP_PROPERTIES_PATH = '/Users/engend/IdeaProjects/EverGrowFinance/src/main/resources/application.properties'
     }
 
