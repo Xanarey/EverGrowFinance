@@ -58,8 +58,8 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Collections.singletonList("http://158.160.154.130")); // Укажите здесь адрес вашего фронтенда
-//        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000")); // Укажите здесь адрес вашего фронтенда
+        String allowedOrigin = System.getenv("CORS_ALLOWED_ORIGIN");
+        configuration.setAllowedOrigins(Collections.singletonList(allowedOrigin)); // Укажите здесь адрес вашего фронтенда
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Разрешаем все методы
         configuration.setAllowedHeaders(Collections.singletonList("*")); // Разрешаем все заголовки
         configuration.setAllowCredentials(true); // Разрешаем передачу учетных данных (например, куки или заголовков аутентификации)
