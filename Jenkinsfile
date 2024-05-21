@@ -50,7 +50,6 @@ pipeline {
                     sh "scp -i ${P_KEY} /Users/engend/IdeaProjects/EverGrowFinance/${DOCKER_COMPOSE_FILE} ${USER}@${SERVER_IP}:${REMOTE_PATH}"
                     sh "scp -r -i ${P_KEY} /Users/engend/IdeaProjects/EverGrowFinance/${DOCKER_FILE} ${USER}@${SERVER_IP}:${REMOTE_PATH}"
                     sh "scp -r -i ${P_KEY} /Users/engend/IdeaProjects/EverGrowFinance/target ${USER}@${SERVER_IP}:${REMOTE_PATH}"
-                    sh "scp -i ${P_KEY} /Users/engend/IdeaProjects/EverGrowFinance/.env ${USER}@${SERVER_IP}:${REMOTE_PATH}"
 
                     // Развертывание
                     sh """
