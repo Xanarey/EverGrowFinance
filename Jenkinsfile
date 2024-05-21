@@ -20,10 +20,12 @@ pipeline {
             }
         }
 
-        stage('Prepare Environment') {
+        stage('Build') {
             steps {
                 script {
-                    sh "sed -i '' 's|CORS_ALLOWED_ORIGIN=.*|CORS_ALLOWED_ORIGIN=${PRODUCTION_IP}|' ${APP_PROPERTIES_PATH}"
+                    dir('/Users/engend/IdeaProjects/EverGrowFinance') {
+                        sh 'mvn clean install -DskipTests'
+                    }
                 }
             }
         }
@@ -31,10 +33,12 @@ pipeline {
         stage('Prepare Environment') {
             steps {
                 script {
-                    sh "sed -i '' 's|CORS_ALLOWED_ORIGIN=${DEVELOPMENT_IP}|CORS_ALLOWED_ORIGIN=${PRODUCTION_IP}|' ${APP_PROPERTIES_PATH}"
+                    // Замена любого текущего значения CORS_ALLOWED_ORIGIN на PRODUCTION_IP
+                    sh "sed -i '' 's|CORS_ALLOWED_ORIGIN=.*|CORS_ALLOWED_ORIGIN=${PRODUCTION_IP}|' ${APP_PROPERTIES_PATH}"
                 }
             }
         }
+
 
         stage('Transfer and Deploy') {
             steps {
