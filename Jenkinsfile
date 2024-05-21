@@ -8,9 +8,6 @@ pipeline {
         DOCKER_FILE = 'Dockerfile'
         P_KEY = '/users/engend/desktop/keys/edkey'
         USER = 'ever-cloud'
-
-        PRODUCTION_IP = 'http://158.160.154.130'
-        APP_PROPERTIES_PATH = '/Users/engend/IdeaProjects/EverGrowFinance/src/main/resources/application.properties'
     }
 
     stages {

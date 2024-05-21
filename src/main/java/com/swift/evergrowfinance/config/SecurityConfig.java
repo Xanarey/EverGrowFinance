@@ -28,9 +28,6 @@ import java.util.List;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    @Value("${CORS_ALLOWED_ORIGIN}")
-    private String CORS_ALLOWED_ORIGIN;
-
     private final JwtConfigurer jwtConfigurer;
 
     @Autowired
