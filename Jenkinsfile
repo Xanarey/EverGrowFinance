@@ -30,16 +30,6 @@ pipeline {
             }
         }
 
-        stage('Prepare Environment') {
-            steps {
-                script {
-                    // Замена любого текущего значения CORS_ALLOWED_ORIGIN на PRODUCTION_IP
-                    sh "sed -i '' 's|CORS_ALLOWED_ORIGIN=.*|CORS_ALLOWED_ORIGIN=${PRODUCTION_IP}|' ${APP_PROPERTIES_PATH}"
-                }
-            }
-        }
-
-
         stage('Transfer and Deploy') {
             steps {
                 script {
