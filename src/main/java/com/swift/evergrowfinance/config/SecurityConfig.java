@@ -21,6 +21,7 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -62,7 +63,13 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Collections.singletonList(CORS_ALLOWED_ORIGIN)); // Укажите здесь адрес вашего фронтенда
+
+        List<String> allowedOrigins = Arrays.asList(
+                "http://158.160.154.130",
+                "http://localhost:3000"
+        );
+
+        configuration.setAllowedOrigins(allowedOrigins); // Укажите здесь адрес вашего фронтенда
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Разрешаем все методы
         configuration.setAllowedHeaders(Collections.singletonList("*")); // Разрешаем все заголовки
         configuration.setAllowCredentials(true); // Разрешаем передачу учетных данных (например, куки или заголовков аутентификации)
