@@ -2,6 +2,7 @@ package com.swift.evergrowfinance.config;
 
 import com.swift.evergrowfinance.security.JwtConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,6 +26,9 @@ import java.util.Collections;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
+
+    @Value("${CORS_ALLOWED_ORIGIN}")
+    private String CORS_ALLOWED_ORIGIN;
 
     private final JwtConfigurer jwtConfigurer;
 
@@ -58,8 +62,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        String allowedOrigin = System.getenv("CORS_ALLOWED_ORIGIN");
-        configuration.setAllowedOrigins(Collections.singletonList(allowedOrigin)); // Укажите здесь адрес вашего фронтенда
+        configuration.setAllowedOrigins(Collections.singletonList(CORS_ALLOWED_ORIGIN)); // Укажите здесь адрес вашего фронтенда
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Разрешаем все методы
         configuration.setAllowedHeaders(Collections.singletonList("*")); // Разрешаем все заголовки
         configuration.setAllowCredentials(true); // Разрешаем передачу учетных данных (например, куки или заголовков аутентификации)

@@ -8,6 +8,10 @@ pipeline {
         DOCKER_FILE = 'Dockerfile'
         P_KEY = '/users/engend/desktop/keys/edkey'
         USER = 'ever-cloud'
+
+        PRODUCTION_IP = 'http://158.160.154.130'
+        DEVELOPMENT_IP = 'http://localhost:3000'
+        APP_PROPERTIES_PATH = '/Users/engend/IdeaProjects/EverGrowFinance/src/main/resources/application.properties'
     }
 
     stages {
@@ -30,8 +34,11 @@ pipeline {
         stage('Prepare Environment') {
             steps {
                 script {
-                    // Замена .env.local на .env.production
-                    sh "cp /Users/engend/IdeaProjects/EverGrowFinance/.env.production /Users/engend/IdeaProjects/EverGrowFinance/.env"
+                    if (env.BRANCH_NAME == 'master') {
+                        sh "sed -i 's|CORS_ALLOWED_ORIGIN=${DEVELOPMENT_IP}|CORS_ALLOWED_ORIGIN=${PRODUCTION_IP}|' ${APP_PROPERTIES_PATH}"
+                    } else {
+                        sh "sed -i 's|CORS_ALLOWED_ORIGIN=${PRODUCTION_IP}|CORS_ALLOWED_ORIGIN=${DEVELOPMENT_IP}|' ${APP_PROPERTIES_PATH}"
+                    }
                 }
             }
         }
