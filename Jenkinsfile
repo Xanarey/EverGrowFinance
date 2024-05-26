@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        SERVER_IP = '158.160.154.130'
+        SERVER_IP = '158.160.167.75'
         REMOTE_PATH = '~'
         DOCKER_COMPOSE_FILE = 'docker-compose.yml'
         DOCKER_FILE = 'Dockerfile'
