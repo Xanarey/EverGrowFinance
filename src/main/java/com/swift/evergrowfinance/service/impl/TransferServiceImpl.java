@@ -4,6 +4,7 @@ import com.swift.evergrowfinance.dto.MoneyTransferRequestDTO;
 import com.swift.evergrowfinance.exceptions.InsufficientFundsException;
 import com.swift.evergrowfinance.exceptions.InvalidTransactionException;
 import com.swift.evergrowfinance.exceptions.WalletNotFoundException;
+import com.swift.evergrowfinance.model.entities.TransactionData;
 import com.swift.evergrowfinance.model.entities.User;
 import com.swift.evergrowfinance.model.entities.Wallet;
 import com.swift.evergrowfinance.repository.WalletRepository;
@@ -13,11 +14,9 @@ import com.swift.evergrowfinance.service.UserService;
 import com.swift.evergrowfinance.service.WalletService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -41,10 +40,10 @@ public class TransferServiceImpl implements MoneyTransferService {
         this.transactionService = transactionService;
     }
 
-    @CachePut(value = "users", key = "#user.id")
+//    @CachePut(value = "users", key = "#user.id")
     @Transactional
     @Override
-    public void transferMoney(User user, MoneyTransferRequestDTO request) {
+    public void transferMoney(User user, TransactionData request) {
         if (!PHONE_PATTERN.matcher(request.getSenderPhoneNumber()).matches() || !PHONE_PATTERN.matcher(request.getRecipientPhoneNumber()).matches()) {
             throw new IllegalArgumentException("Неверный формат номера телефона");
         }
@@ -90,11 +89,16 @@ public class TransferServiceImpl implements MoneyTransferService {
         userService.update(one);
         userService.update(two);
 
-        transactionService.savingTransaction(one, request);
+        MoneyTransferRequestDTO moneyTransferRequestDTO = new MoneyTransferRequestDTO(
+                user, request.getAmount(), request.getCurrency(), request.getSenderPhoneNumber(), request.getRecipientPhoneNumber(), request.getDescription(), request.getType()
+        );
+
+        transactionService.savingTransaction(one, moneyTransferRequestDTO);
 
 
 
 
         log.info("Перевод средств выполнен: с {} на {}, сумма: {}", request.getSenderPhoneNumber(), request.getRecipientPhoneNumber(),request.getAmount());
     }
+
 }

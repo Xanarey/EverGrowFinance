@@ -9,7 +9,7 @@
     <changeSet id="2" author="yourname">
         <insert tableName="users">
             <column name="id" value="1"/>
-            <column name="email" value="admin@gmail.com"/>
+            <column name="email" value="xenor.flow@mail.ru"/>
             <column name="password" value="$2a$12$QoLS9iyjmM8mj88NQML7/ODm.O3HDusOaMXt4DJzqfaNlZoyfjR8S"/>
             <column name="role" value="ADMIN"/>
         </insert>

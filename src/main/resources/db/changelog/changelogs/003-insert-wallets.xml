@@ -11,7 +11,7 @@
             <column name="id" value="1"/>
             <column name="wallet_type" value="CURRENT"/>
             <column name="salary" valueNumeric="3000.00"/>
-            <column name="balance" valueNumeric="11946.00"/>
+            <column name="balance" valueNumeric="250500.00"/>
             <column name="created_at" value="2024-02-14 19:06:29"/>
             <column name="user_id" value="1"/>
             <column name="phone_number" value="89033543683"/>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="007-create-transaction-data-table" author="your_username">
+        <createTable tableName="transaction_data">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="user_id" type="bigint">
+            </column>
+            <column name="amount" type="decimal(19,2)">
+            </column>
+            <column name="currency" type="varchar(50)">
+            </column>
+            <column name="date_time" type="timestamp">
+            </column>
+            <column name="sender_phone_number" type="varchar(15)">
+            </column>
+            <column name="recipient_phone_number" type="varchar(15)">
+            </column>
+            <column name="status" type="varchar(20)">
+            </column>
+            <column name="type" type="varchar(20)">
+            </column>
+            <column name="description" type="text"/>
+        </createTable>
+    </changeSet>
+
+
+</databaseChangeLog>
