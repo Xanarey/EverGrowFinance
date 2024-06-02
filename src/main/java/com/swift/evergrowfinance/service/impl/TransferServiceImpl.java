@@ -17,6 +17,7 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -74,8 +75,7 @@ public class TransferServiceImpl implements MoneyTransferService {
             throw new InsufficientFundsException("Недостаточно средств на счету для перевода");
         }
 
-        Wallet walletFr = walletFrom;
-        Wallet walletT = walletTo;
+
 
         walletFrom.setBalance(walletFrom.getBalance().subtract(request.getAmount()));
         walletTo.setBalance(walletTo.getBalance().add(request.getAmount()));
@@ -84,13 +84,16 @@ public class TransferServiceImpl implements MoneyTransferService {
         walletService.update(walletTo);
 
 
-        User one = walletFr.getUser();
-        User two = walletT.getUser();
+        User one = walletFrom.getUser();
+        User two = walletTo.getUser();
 
         userService.update(one);
         userService.update(two);
 
         transactionService.savingTransaction(one, request);
+
+
+
 
         log.info("Перевод средств выполнен: с {} на {}, сумма: {}", request.getSenderPhoneNumber(), request.getRecipientPhoneNumber(),request.getAmount());
     }

@@ -11,4 +11,5 @@
     <include file="changelogs/003-insert-wallets.xml" relativeToChangelogFile="true"/>
     <include file="changelogs/004-create-transactions-table.xml" relativeToChangelogFile="true"/>
     <include file="changelogs/005-create-subscriptions-table.xml" relativeToChangelogFile="true"/>
+    <include file="changelogs/006-create-codes-table.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>
