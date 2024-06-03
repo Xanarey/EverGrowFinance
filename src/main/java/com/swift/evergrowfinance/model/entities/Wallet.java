@@ -22,9 +22,6 @@ public class Wallet implements Serializable {
     @Column(name = "phone_number")
     private String phoneNumber;
 
-    @Column(name = "salary")
-    private BigDecimal salary;
-
     @Column(name = "balance")
     private BigDecimal balance;
 

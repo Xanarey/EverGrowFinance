@@ -1,6 +1,7 @@
 package com.swift.evergrowfinance.controller;
 
 import com.swift.evergrowfinance.dto.AuthRequestDTO;
+import com.swift.evergrowfinance.dto.RegisterRequestDTO;
 import com.swift.evergrowfinance.security.JwtTokenProvider;
 import com.swift.evergrowfinance.service.UserService;
 import com.swift.evergrowfinance.utils.AuthenticationHelper;
@@ -10,7 +11,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Map;
@@ -23,6 +27,7 @@ public class AuthenticationRestController {
     private final AuthenticationManager authenticationManager;
     private final UserService userService;
     private final JwtTokenProvider jwtTokenProvider;
+
 
     @Autowired
     public AuthenticationRestController(AuthenticationManager authenticationManager, UserService userService, JwtTokenProvider jwtTokenProvider) {
@@ -41,5 +46,13 @@ public class AuthenticationRestController {
         }
     }
 
-
+    @PostMapping("/register")
+    public String register(@RequestBody RegisterRequestDTO registerRequestDTO) {
+        try {
+            userService.registerNewUser(registerRequestDTO);
+            return "Пользователь успешно зарегистрирован";
+        } catch (Exception e) {
+            return e.getMessage();
+        }
+    }
 }

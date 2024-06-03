@@ -27,7 +27,6 @@
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="phone_number" type="VARCHAR(20)"/>
-            <column name="salary" type="NUMERIC(10, 2)"/>
             <column name="balance" type="NUMERIC(10, 2)"/>
             <column name="created_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
             <column name="wallet_type" type="VARCHAR(50)"/>
