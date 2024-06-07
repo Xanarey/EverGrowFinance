@@ -15,7 +15,14 @@ public class EmailService {
     private static final String SENDER_HOST = "smtp.gmail.com";
     private static final String SENDER_PORT = "587";
 
-    public void sendEmail(String RECEIVER_EMAIL_ADDRESS, String code) {
+    public void sendPasswordResetEmail(String email, String token) {
+        String resetUrl = "http://localhost:3000/reset-password/" + token;
+        String messageContent = "<p>To reset your password, click the link below:</p>"
+                + "<a href=\"" + resetUrl + "\">" + resetUrl + "</a>";
+        sendEmail(email, messageContent);
+    }
+
+    public void sendEmail(String RECEIVER_EMAIL_ADDRESS, String emailContent) {
         Properties properties = new Properties();
         properties.put("mail.smtp.host", SENDER_HOST);
         properties.put("mail.smtp.port", SENDER_PORT);
@@ -32,10 +39,8 @@ public class EmailService {
             MimeMessage message = new MimeMessage(session);
             message.setFrom(new InternetAddress(SENDER_EMAIL_ADDRESS));
             message.addRecipient(Message.RecipientType.TO, new InternetAddress(RECEIVER_EMAIL_ADDRESS));
-            message.setSubject("Test Email from Java Application");
-            message.setText("Hello, this is a sample email sent from a Java program!" + " Your code: " + code);
-
-
+            message.setSubject("Password Reset Request");
+            message.setContent(emailContent, "text/html; charset=utf-8");
 
             Transport.send(message);
             System.out.println("Email is successfully sent!");

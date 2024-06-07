@@ -13,4 +13,5 @@
     <include file="changelogs/005-create-subscriptions-table.xml" relativeToChangelogFile="true"/>
     <include file="changelogs/006-create-codes-table.xml" relativeToChangelogFile="true"/>
     <include file="changelogs/007-create-transaction-data-table.xml" relativeToChangelogFile="true"/>
+    <include file="changelogs/008-create-tokens.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

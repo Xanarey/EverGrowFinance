@@ -47,7 +47,7 @@ public class SecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeHttpRequests()
-                .requestMatchers("/auth", "/register").permitAll()
+                .requestMatchers("/auth", "/register", "/password/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .apply(jwtConfigurer)
