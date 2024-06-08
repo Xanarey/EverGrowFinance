@@ -2,6 +2,7 @@ package com.swift.evergrowfinance.config;
 
 import com.swift.evergrowfinance.security.JwtConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,6 +26,12 @@ import java.util.List;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
+
+//    @Value("${url.production}")
+//    private String urlProduction;
+//
+//    @Value("${url.local}")
+//    private String urlLocal;
 
     private final JwtConfigurer jwtConfigurer;
 
