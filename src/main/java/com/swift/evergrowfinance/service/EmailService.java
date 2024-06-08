@@ -3,6 +3,7 @@ package com.swift.evergrowfinance.service;
 import jakarta.mail.*;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Properties;
@@ -11,13 +12,20 @@ import java.util.Properties;
 @Service
 public class EmailService {
 
+    @Value("${url.local}")
+    private String urlLocal;
+
+    @Value("${url.production}")
+    private String urlProduction;
+
     private static final String SENDER_EMAIL_ADDRESS = "akaks9090@gmail.com";
     private static final String SENDER_EMAIL_PASSWORD = "jpiwvpbgxslqjbld";
     private static final String SENDER_HOST = "smtp.gmail.com";
     private static final String SENDER_PORT = "587";
 
     public void sendPasswordResetEmail(String email, String token) {
-        String resetUrl = "http://localhost:3000/reset-password/" + token;
+        String resetUrl = urlLocal + "/reset-password/" + token;
+//        String resetUrl = urlProduction + "/reset-password/" + token;
         String messageContent = "<p>To reset your password, click the link below:</p>"
                 + "<a href=\"" + resetUrl + "\">" + resetUrl + "</a>";
         sendEmail(email, messageContent);

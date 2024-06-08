@@ -27,11 +27,11 @@ import java.util.List;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-//    @Value("${url.production}")
-//    private String urlProduction;
-//
-//    @Value("${url.local}")
-//    private String urlLocal;
+    @Value("${url.production}")
+    private String urlProduction;
+
+    @Value("${url.local}")
+    private String urlLocal;
 
     private final JwtConfigurer jwtConfigurer;
 
@@ -66,15 +66,12 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        List<String> allowedOrigins = Arrays.asList(
-                "http://158.160.167.75",
-                "http://localhost:3000"
-        );
+        List<String> allowedOrigins = Arrays.asList(urlProduction, urlLocal);
 
-        configuration.setAllowedOrigins(allowedOrigins); // Укажите здесь адрес вашего фронтенда
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Разрешаем все методы
-        configuration.setAllowedHeaders(Collections.singletonList("*")); // Разрешаем все заголовки
-        configuration.setAllowCredentials(true); // Разрешаем передачу учетных данных (например, куки или заголовков аутентификации)
+        configuration.setAllowedOrigins(allowedOrigins);
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(Collections.singletonList("*"));
+        configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
