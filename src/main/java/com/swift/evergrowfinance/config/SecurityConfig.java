@@ -47,7 +47,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        return http
+        http
                 .httpBasic().disable()
                 .cors().and()
                 .csrf().disable()
@@ -57,9 +57,9 @@ public class SecurityConfig {
                 .requestMatchers("/auth", "/register", "/password/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .apply(jwtConfigurer)
-                .and()
-                .build();
+                .apply(jwtConfigurer);
+
+        return http.build();
     }
 
     @Bean
