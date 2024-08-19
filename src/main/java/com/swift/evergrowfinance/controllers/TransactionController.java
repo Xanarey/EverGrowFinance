@@ -1,4 +1,4 @@
-package com.swift.evergrowfinance.controller;
+package com.swift.evergrowfinance.controllers;
 
 import com.swift.evergrowfinance.dto.TransactionDTO;
 import com.swift.evergrowfinance.model.entities.Transaction;
@@ -17,7 +17,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/transactions")

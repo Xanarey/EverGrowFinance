@@ -1,4 +1,4 @@
-package com.swift.evergrowfinance.controller;
+package com.swift.evergrowfinance.controllers;
 
 import com.swift.evergrowfinance.dto.AuthRequestDTO;
 import com.swift.evergrowfinance.dto.RegisterRequestDTO;
@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;

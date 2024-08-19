@@ -1,4 +1,4 @@
-package com.swift.evergrowfinance.controller;
+package com.swift.evergrowfinance.controllers;
 
 import com.swift.evergrowfinance.dto.PasswordForgotDTO;
 import com.swift.evergrowfinance.dto.PasswordResetDTO;

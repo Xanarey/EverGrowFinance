@@ -1,4 +1,4 @@
-package com.swift.evergrowfinance.controller;
+package com.swift.evergrowfinance.controllers;
 
 import com.swift.evergrowfinance.dto.PasswordChangeDTO;
 import com.swift.evergrowfinance.dto.UserUpdateEmailDTO;

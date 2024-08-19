@@ -1,4 +1,4 @@
-package com.swift.evergrowfinance.controller;
+package com.swift.evergrowfinance.controllers;
 
 import com.swift.evergrowfinance.dto.UserBalanceDTO;
 import com.swift.evergrowfinance.model.entities.User;
@@ -47,10 +47,8 @@ public class UserBalanceController {
 
         User user = userOptional.get();
 
-        List<UserBalanceDTO> userBalanceDTOS = user.getWallets().stream()
+        return user.getWallets().stream()
                 .map(UserBalanceDTO::fromWallet)
                 .toList();
-
-        return userBalanceDTOS;
     }
 }
