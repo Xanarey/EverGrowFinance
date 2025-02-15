@@ -1,6 +1,7 @@
 package com.swift.evergrowfinance.service.impl;
 
 import com.swift.evergrowfinance.dto.MoneyTransferRequestDTO;
+import com.swift.evergrowfinance.dto.TransactionDTO;
 import com.swift.evergrowfinance.exceptions.InsufficientFundsException;
 import com.swift.evergrowfinance.exceptions.InvalidTransactionException;
 import com.swift.evergrowfinance.exceptions.WalletNotFoundException;
@@ -14,9 +15,14 @@ import com.swift.evergrowfinance.service.UserService;
 import com.swift.evergrowfinance.service.WalletService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
