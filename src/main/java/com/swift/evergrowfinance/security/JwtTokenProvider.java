@@ -3,6 +3,7 @@ package com.swift.evergrowfinance.security;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import java.util.Date;
 
+@Slf4j
 @Component
 public class JwtTokenProvider {
 
@@ -32,12 +34,11 @@ public class JwtTokenProvider {
         this.userDetailsService = userDetailsService;
     }
 
-    public String createToken(String username, String role) {
-        Claims claims = Jwts.claims().setSubject(username);
+    public String createToken(String email, String role) {
+        Claims claims = Jwts.claims().setSubject(email);
         claims.put("role", role);
         Date date = new Date();
         Date validity = new Date(date.getTime() + validityInMilliSeconds * 1000);
-
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(date)
