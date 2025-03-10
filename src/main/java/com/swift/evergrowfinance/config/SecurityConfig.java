@@ -56,7 +56,7 @@ public class SecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeHttpRequests()
-                .requestMatchers("/auth", "/register", "/password/**", "/crypto/btc").permitAll()
+                .requestMatchers("/auth", "/register", "/password/**", "/crypto/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .apply(jwtConfigurer);
