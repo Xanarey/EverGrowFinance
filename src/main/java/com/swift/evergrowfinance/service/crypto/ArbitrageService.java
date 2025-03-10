@@ -16,7 +16,7 @@ public class ArbitrageService {
     }
 
     public String findArbitrageOpportunities(double amountUsd) {
-        double resultBinance = amountUsd / binanceService.findBestAdvertisement(amountUsd, true).getPrice();
+        double resultBinance = amountUsd / binanceService.findBestAdvertisement(amountUsd).getPrice();
         double resultHuobi = amountUsd / huobiService.findBestAdvertisement(amountUsd).getPrice();
         if (resultBinance > resultHuobi) {
             return "RESULT Binance -> Huobi % : " + resultBinance / resultHuobi + " | 1 roundtrip arbitrage : " + (amountUsd * 0.01) * (resultBinance / resultHuobi);

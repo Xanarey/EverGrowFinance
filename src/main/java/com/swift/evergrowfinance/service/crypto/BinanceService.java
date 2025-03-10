@@ -30,7 +30,7 @@ public class BinanceService {
         this.restTemplate = restTemplate;
     }
 
-    public CurrencyPairDTO findBestAdvertisement(double desiredAmount, boolean isBTC) {
+    public CurrencyPairDTO findBestAdvertisement(double desiredAmount) {
 
         Map<String, Object> requestPayload = new HashMap<>();
         requestPayload.put("page", 1);
@@ -60,58 +60,61 @@ public class BinanceService {
 
         byte[] bodyBytes = responseEntity.getBody();
 
-        try (ByteArrayInputStream bis = new ByteArrayInputStream(bodyBytes);
-             GZIPInputStream gis = new GZIPInputStream(bis);
-             BufferedReader reader = new BufferedReader(new InputStreamReader(gis, StandardCharsets.UTF_8))) {
+        try {
+            assert bodyBytes != null;
+            try (ByteArrayInputStream bis = new ByteArrayInputStream(bodyBytes);
+                     GZIPInputStream gis = new GZIPInputStream(bis);
+                     BufferedReader reader = new BufferedReader(new InputStreamReader(gis, StandardCharsets.UTF_8))) {
 
-            String decompressedJson = reader.lines().collect(Collectors.joining("\n"));
-            System.out.println("Полученный JSON: " + decompressedJson);
+                String decompressedJson = reader.lines().collect(Collectors.joining("\n"));
+                System.out.println("Полученный JSON: " + decompressedJson);
 
-            JsonNode root = objectMapper.readTree(decompressedJson);
-            JsonNode dataArray = root.path("data");
-            if (!dataArray.isArray()) {
-                throw new RuntimeException("Поле 'data' отсутствует или не является массивом.");
-            }
-
-            CurrencyPairDTO bestCurrencyPair = null;
-            double bestPrice = Double.MAX_VALUE;
-
-            for (JsonNode item : dataArray) {
-                JsonNode advNode = item.path("adv");
-                if (advNode.isMissingNode()) {
-                    continue;
+                JsonNode root = objectMapper.readTree(decompressedJson);
+                JsonNode dataArray = root.path("data");
+                if (!dataArray.isArray()) {
+                    throw new RuntimeException("Поле 'data' отсутствует или не является массивом.");
                 }
 
-                String tradeType = advNode.path("tradeType").asText();
-                if (!"SELL".equalsIgnoreCase(tradeType)) {
-                    continue;
-                }
+                CurrencyPairDTO bestCurrencyPair = null;
+                double bestPrice = Double.MAX_VALUE;
 
-                double price = advNode.path("price").asDouble();
-                double minAmount = advNode.path("minSingleTransAmount").asDouble();
-                double maxAmount = advNode.path("maxSingleTransAmount").asDouble();
+                for (JsonNode item : dataArray) {
+                    JsonNode advNode = item.path("adv");
+                    if (advNode.isMissingNode()) {
+                        continue;
+                    }
 
-                if (desiredAmount >= minAmount && desiredAmount <= maxAmount) {
-                    if (price < bestPrice) {
-                        bestPrice = price;
-                        bestCurrencyPair = new CurrencyPairDTO();
-                        bestCurrencyPair.setAdvNo(advNode.path("advNo").asText());
-                        bestCurrencyPair.setPrice(price);
-                        bestCurrencyPair.setMinAmount(minAmount);
-                        bestCurrencyPair.setMaxAmount(maxAmount);
-                        bestCurrencyPair.setAsset(advNode.path("asset").asText());
-                        bestCurrencyPair.setFiatUnit(advNode.path("fiatUnit").asText());
+                    String tradeType = advNode.path("tradeType").asText();
+                    if (!"SELL".equalsIgnoreCase(tradeType)) {
+                        continue;
+                    }
 
-                        JsonNode advertiserNode = item.path("advertiser");
-                        if (!advertiserNode.isMissingNode()) {
-                            bestCurrencyPair.setAdvertiserNickName(advertiserNode.path("nickName").asText());
+                    double price = advNode.path("price").asDouble();
+                    double minAmount = advNode.path("minSingleTransAmount").asDouble();
+                    double maxAmount = advNode.path("maxSingleTransAmount").asDouble();
+
+                    if (desiredAmount >= minAmount && desiredAmount <= maxAmount) {
+                        if (price < bestPrice) {
+                            bestPrice = price;
+                            bestCurrencyPair = new CurrencyPairDTO();
+                            bestCurrencyPair.setAdvNo(advNode.path("advNo").asText());
+                            bestCurrencyPair.setPrice(price);
+                            bestCurrencyPair.setMinAmount(minAmount);
+                            bestCurrencyPair.setMaxAmount(maxAmount);
+                            bestCurrencyPair.setAsset(advNode.path("asset").asText());
+                            bestCurrencyPair.setFiatUnit(advNode.path("fiatUnit").asText());
+
+                            JsonNode advertiserNode = item.path("advertiser");
+                            if (!advertiserNode.isMissingNode()) {
+                                bestCurrencyPair.setAdvertiserNickName(advertiserNode.path("nickName").asText());
+                            }
                         }
                     }
                 }
+
+                return bestCurrencyPair;
+
             }
-
-            return bestCurrencyPair;
-
         } catch (IOException e) {
             throw new RuntimeException("Ошибка при распаковке gzip-ответа", e);
         }

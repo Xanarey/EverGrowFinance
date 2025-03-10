@@ -31,7 +31,7 @@ public class CryptoController {
     @GetMapping("/binance/btc/{amountUsd}")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<CurrencyPairDTO> getBinanceBTCPrice(@PathVariable double amountUsd) {
-        CurrencyPairDTO bestAdv = binanceService.findBestAdvertisement(amountUsd, true);
+        CurrencyPairDTO bestAdv = binanceService.findBestAdvertisement(amountUsd);
         System.out.println("BEST ADVERTISEMENT getBinanceBTCPrice: " + bestAdv);
         return ResponseEntity.ok(bestAdv);
     }
